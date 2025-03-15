@@ -13,7 +13,7 @@ struct UI_Starter: View {
             ZStack{
                 Rectangle()
                     .fill(Color.green)
-                    .frame(width: .infinity, height: 100)
+                    .frame(width: 500, height: 100)
                 
                 Image("LOGO")
                     .resizable()
@@ -46,7 +46,7 @@ struct UI_Starter: View {
             ZStack{
                 Rectangle()
                     .fill(Color.green)
-                    .frame(width: .infinity, height: 75)
+                    .frame(width: 500, height: 75)
                 
                 Circle()
                     .fill(Color.white)
