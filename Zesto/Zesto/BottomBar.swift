@@ -13,7 +13,7 @@ struct BottomBar: View {
             Spacer()
             ZStack{
                 Rectangle()
-                    .fill(Color.green)
+                    .fill(Color.green.opacity(0.85))
                     .frame(width: 500, height: 75)
                 
                 Circle()
@@ -32,45 +32,48 @@ struct BottomBar: View {
                 }
                 .offset(y: -40)
                 
-                Button {
-                    
-                } label: {
-                    Image(systemName: "document.viewfinder")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(.black)
+                HStack{
+                    Spacer()
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "document.viewfinder")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.black)
+                    }
+                    Spacer()
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "pencil.and.list.clipboard")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.black)
+                    }
+                    Spacer()
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "ellipsis.message")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.black)
+                    }
+                    Spacer()
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "person.3")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.black)
+                    }
+                    Spacer()
                 }
-                .offset(x: -130)
+                .padding(.horizontal, 20)
                 
-                Button {
-                    
-                } label: {
-                    Image(systemName: "pencil.and.list.clipboard")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(.black)
-                }
-                .offset(x: -40)
                 
-                Button {
-                    
-                } label: {
-                    Image(systemName: "ellipsis.message")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(.black)
-                }
-                .offset(x: 40)
-                
-                Button {
-                    
-                } label: {
-                    Image(systemName: "person.3")
-                        .resizable()
-                        .frame(width: 40, height: 30)
-                        .foregroundColor(.black)
-                }
-                .offset(x: 130)
             }
             
         }

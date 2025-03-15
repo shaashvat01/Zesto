@@ -12,7 +12,7 @@ struct TopBar: View {
         VStack{
             ZStack{
                 Rectangle()
-                    .fill(Color.green)
+                    .fill(Color.green.opacity(0.85))
                     .frame(width: 500, height: 92)
                 
                 Text("Zesto")
