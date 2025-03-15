@@ -13,22 +13,22 @@ struct TopBar: View {
             ZStack{
                 Rectangle()
                     .fill(Color.green)
-                    .frame(width: 500, height: 100)
+                    .frame(width: 500, height: 92)
                 
-                Image("LOGO")
-                    .resizable()
-                    .frame(width: 150, height: 60)
-                    .offset(x: -110, y: 20)
+                Text("Zesto")
+                    .font(.system(size: 40, weight: .bold, design: .default))
+                    .offset(x: -120, y: 20)
                 
                 
                 Button {
                     
                 } label: {
-                    Image("MenuBar")
+                    Image(systemName: "line.3.horizontal")
                         .resizable()
                         .frame(width: 30, height: 30)
+                        .foregroundColor(.black)
                 }
-                .offset(x: 170, y: 30)
+                .offset(x: 160, y: 20)
 
                 
             }

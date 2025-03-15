@@ -25,45 +25,50 @@ struct BottomBar: View {
                 Button {
                     
                 } label: {
-                    Image("Home")
+                    Image(systemName: "house")
                         .resizable()
                         .frame(width: 30, height: 30)
+                        .foregroundColor(.black)
                 }
                 .offset(y: -40)
                 
                 Button {
                     
                 } label: {
-                    Image("Scan")
+                    Image(systemName: "document.viewfinder")
                         .resizable()
                         .frame(width: 30, height: 30)
+                        .foregroundColor(.black)
                 }
                 .offset(x: -130)
                 
                 Button {
                     
                 } label: {
-                    Image("Fridge")
+                    Image(systemName: "pencil.and.list.clipboard")
                         .resizable()
                         .frame(width: 30, height: 30)
+                        .foregroundColor(.black)
                 }
                 .offset(x: -40)
                 
                 Button {
                     
                 } label: {
-                    Image("Chat")
+                    Image(systemName: "ellipsis.message")
                         .resizable()
                         .frame(width: 30, height: 30)
+                        .foregroundColor(.black)
                 }
                 .offset(x: 40)
                 
                 Button {
                     
                 } label: {
-                    Image("Community")
+                    Image(systemName: "person.3")
                         .resizable()
-                        .frame(width: 30, height: 30)
+                        .frame(width: 40, height: 30)
+                        .foregroundColor(.black)
                 }
                 .offset(x: 130)
             }
