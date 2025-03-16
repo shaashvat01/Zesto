@@ -84,6 +84,7 @@ struct ScanView: View {
             
             BottomBar()
         }
+        .navigationBarBackButtonHidden(true)
     }
 }
 

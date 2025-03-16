@@ -34,9 +34,7 @@ struct BottomBar: View {
                 
                 HStack{
                     Spacer()
-                    Button {
-                        
-                    } label: {
+                    NavigationLink(destination: ScanView()) {
                         Image(systemName: "document.viewfinder")
                             .resizable()
                             .frame(width: 30, height: 30)

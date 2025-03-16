@@ -9,15 +9,19 @@ import SwiftUI
 
 struct HomePage: View {
     var body: some View {
-        VStack{
-            TopBar()
-            
+        NavigationView
+        {
             VStack{
+                TopBar()
                 
+                VStack{
+                    
+                }
+                
+                BottomBar()
             }
-            
-            BottomBar()
         }
+        .navigationBarHidden(true)
     }
 }
 
