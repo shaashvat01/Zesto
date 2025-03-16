@@ -11,7 +11,7 @@ import SwiftUI
 struct ScanView: View {
     
     @State private var showImagePicker = false
-    @State private var sourceType : UIImagePickerController.SourceType = .camera
+    @State private var sourceType : UIImagePickerController.SourceType? = nil
     @State private var selectedImage: UIImage? = nil
     
     var body: some View {
@@ -78,8 +78,19 @@ struct ScanView: View {
             }
             .sheet(isPresented: $showImagePicker)
             {
-                ImagePicker(sourceType: sourceType, selectedImage: $selectedImage)
+                ImagePicker(sourceType: sourceType ?? .camera, selectedImage: $selectedImage)
                     .ignoresSafeArea()
+            }
+            
+            if let image = selectedImage {
+                NavigationLink(destination: ResultView(image: image)) {
+                    Text("Process Selected Image")
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .padding()
             }
             
             BottomBar()
@@ -92,7 +103,7 @@ struct ScanView: View {
 struct ImagePicker: UIViewControllerRepresentable
 {
     @Environment(\.presentationMode) private var presentationMode
-    var sourceType: UIImagePickerController.SourceType = .photoLibrary
+    var sourceType: UIImagePickerController.SourceType
     @Binding var selectedImage: UIImage?
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
