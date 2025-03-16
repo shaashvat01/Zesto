@@ -30,7 +30,7 @@ class Perplexity {
     func processImage(_ text: String, completion: @escaping (String?) -> Void) {
         let headers: HTTPHeaders = [
             "Authorization": "Bearer \(apiKey)",     // auth key
-            "Content-Type": "application/json"         // JSON format request
+            "Content-Type": "application/json"       // JSON format request
         ]
         
         // IMPORTANT - TELLS MODEL WHAT TO DO
@@ -39,14 +39,26 @@ class Perplexity {
             "messages": [
                 [
                     "role": "system",
-                    "content": "Analyze the given grocery receipt text and extract item details in a structured table format. Expand shorthand names into full product names where necessary. The output should be a table with exactly three columns:\n\n- Name: Full product name (expand shorthand if needed).\n- Quantity: Extract the quantity from the receipt, default to 1 if missing.\n- Price: Extract the price of each item.\n\n**Return output as structured text in this format:**\n\n| Name | Quantity | Price |\n|------|----------|--------|\n| Example Item | 2 | 5.99 |\n| Another Item | 1 | 3.49 |\n\n**Do not add explanations or extra text. Only return the formatted table.**"
+                    "content": """
+                    You are a text parser. 
+                    Given a grocery receipt, you must output only a table with three columns: Name, Quantity, Price.
+                    Do not include explanations or chain-of-thought. 
+                    End your response immediately after providing the table in this format:
+
+                    | Name | Quantity | Price |
+                    |------|----------|-------|
+                    | Example Item | 2 | 5.99 |
+                    | Another Item | 1 | 3.49 |
+
+                    Only output the table, nothing else.
+                    """
                 ],
                 [
                     "role": "user",
                     "content": text
                 ]
             ],
-            "max_tokens": 2000,
+            "max_tokens": 1000,
             "temperature": 0.2,
             "top_p": 0.9
         ]

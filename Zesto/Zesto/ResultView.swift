@@ -27,15 +27,6 @@ struct ResultView: View {
             {
                 ScrollView
                 {
-                    Text("Extracted Text:")
-                        .font(.headline)
-                        .padding(.top)
-                    Text(recognizedText)
-                        .padding()
-
-                    Divider()
-                        .padding(.vertical)
-
                     Text("Perplexity Analysis:")
                         .font(.headline)
                     Text(perplexityResponse)
