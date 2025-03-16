@@ -13,89 +13,103 @@ struct ScanView: View {
     @State private var showImagePicker = false
     @State private var sourceType : UIImagePickerController.SourceType? = nil
     @State private var selectedImage: UIImage? = nil
+    @State private var isShowingResult = false
     
     var body: some View {
-        VStack
+        NavigationStack
         {
-            TopBar()
-            
             VStack
             {
-                Button(action: {
-                    if UIImagePickerController.isSourceTypeAvailable(.camera)
-                    {
-                        sourceType = .camera
-                        showImagePicker = true
-                    }
-                    else
-                    {
-                        print("Camera not available")
-                    }
-                }){
-                    VStack
-                    {
-                        Image(systemName: "camera.fill")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 50, height: 50)
-                        
-                        Text("Camera")
-                            .font(.headline)
-                    }
-                    .padding()
-                    .frame(width: 150, height: 150)
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(15)
-                }
-                .padding(.bottom, 90)
+                TopBar()
                 
-                Button(action: {
-                    if UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
-                    {
-                        sourceType = .photoLibrary
-                        showImagePicker = true
-                    }
-                    else
-                    {
-                        print("Can't access photo library")
-                    }
-                }){
-                    VStack
-                    {
-                        Image(systemName: "photo.fill")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 50, height: 50)
-                        
-                        Text("Gallery")
-                            .font(.headline)
-                    }
-                    .padding()
-                    .frame(width: 150, height: 150)
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(15)
-                }
-            }
-            .sheet(isPresented: $showImagePicker)
-            {
-                ImagePicker(sourceType: sourceType ?? .camera, selectedImage: $selectedImage)
-                    .ignoresSafeArea()
-            }
-            
-            if let image = selectedImage {
-                NavigationLink(destination: ResultView(image: image)) {
-                    Text("Process Selected Image")
+                VStack
+                {
+                    Button(action: {
+                        if UIImagePickerController.isSourceTypeAvailable(.camera)
+                        {
+                            sourceType = .camera
+                            showImagePicker = true
+                        }
+                        else
+                        {
+                            print("Camera not available")
+                        }
+                    }){
+                        VStack
+                        {
+                            Image(systemName: "camera.fill")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 50, height: 50)
+                            
+                            Text("Camera")
+                                .font(.headline)
+                        }
                         .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                        .frame(width: 150, height: 150)
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(15)
+                    }
+                    .padding(.bottom, 90)
+                    
+                    Button(action: {
+                        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
+                        {
+                            sourceType = .photoLibrary
+                            showImagePicker = true
+                        }
+                        else
+                        {
+                            print("Can't access photo library")
+                        }
+                    }){
+                        VStack
+                        {
+                            Image(systemName: "photo.fill")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 50, height: 50)
+                            
+                            Text("Gallery")
+                                .font(.headline)
+                        }
+                        .padding()
+                        .frame(width: 150, height: 150)
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(15)
+                    }
                 }
-                .padding()
+                .sheet(isPresented: $showImagePicker)
+                {
+                    ImagePicker(sourceType: sourceType ?? .camera, selectedImage: $selectedImage)
+                        .ignoresSafeArea()
+                }
+                
+                // Automatically navigate when an image is selected.
+                .onChange(of: selectedImage)
+                {
+                    if selectedImage != nil
+                    {
+                        isShowingResult = true
+                    }
+                }
+                
+                BottomBar()
+            }
+            .navigationBarBackButtonHidden(true)
+            .navigationDestination(isPresented: $isShowingResult)
+            {
+                if let image = selectedImage
+                {
+                    ResultView(image: image)
+                }
+                else
+                {
+                    Text("No image selected.")
+                }
             }
             
-            BottomBar()
         }
-        .navigationBarBackButtonHidden(true)
     }
 }
 

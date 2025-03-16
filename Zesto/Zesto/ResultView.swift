@@ -47,6 +47,12 @@ struct ResultView: View {
         .onAppear {
             processImage()
         }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                EmptyView()
+            }
+        }
     }
 
     func processImage() {
