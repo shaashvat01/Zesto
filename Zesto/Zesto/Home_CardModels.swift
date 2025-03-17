@@ -7,15 +7,22 @@
 
 import Foundation
 
-public class recommendCardHome{
-    var mealTime: String
-    var dishName: String
-    var image: String
-    
-    init(mealTime: String, dishName: String, image: String) {
-        self.mealTime = mealTime
-        self.dishName = dishName
-        self.image = image
-    }
-    
+struct RecommendCardHome: Identifiable {
+    let id = UUID()
+    let mealTime: String
+    let dishName: String
+    var imageURL: String?
 }
+
+struct InsightsCardHome: Identifiable {
+    let id = UUID()
+    let message: String
+}
+
+struct PopularDishesCardHome: Identifiable {
+    let id = UUID()
+    let dishName: String
+    var imageURL: String?
+}
+
+
