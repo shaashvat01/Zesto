@@ -12,24 +12,19 @@ struct ResultView: View {
     let image: UIImage
 
     @State private var recognizedText: String = ""
-    @State private var perplexityResponse: String = ""
+    @State private var openAIResponse: String = ""
     @State private var isLoading: Bool = true
 
     var body: some View {
-        VStack
-        {
-            if isLoading
-            {
+        VStack {
+            if isLoading {
                 ProgressView("Processing image...")
                     .padding()
-            }
-            else
-            {
-                ScrollView
-                {
-                    Text("Perplexity Analysis:")
+            } else {
+                ScrollView {
+                    Text("OpenAI Analysis:")
                         .font(.headline)
-                    Text(perplexityResponse)
+                    Text(openAIResponse)
                         .padding()
                 }
             }
@@ -47,25 +42,20 @@ struct ResultView: View {
     }
 
     func processImage() {
-        // Using VisionManager to extract text from the image.
+        // Use VisionManager to extract text from the image.
         VisionManager.shared.recognizeText(from: image) { text in
             if let text = text, !text.isEmpty {
                 self.recognizedText = text
-                // Sending the extracted text to Perplexity.
-                Perplexity.shared.processImage(text) { response in
-                    if let response = response
-                    {
-                        self.perplexityResponse = response
-                    }
-                    else
-                    {
-                        self.perplexityResponse = "No response from API."
+                // Sending the extracted text to OpenAI.
+                OpenAI.shared.processImage(text) { response in
+                    if let response = response {
+                        self.openAIResponse = response
+                    } else {
+                        self.openAIResponse = "No response from API."
                     }
                     self.isLoading = false
                 }
-            }
-            else
-            {
+            } else {
                 self.recognizedText = "No text found."
                 self.isLoading = false
             }
