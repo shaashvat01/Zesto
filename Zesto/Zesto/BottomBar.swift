@@ -22,9 +22,7 @@ struct BottomBar: View {
                     .frame(width: 50, height: 50)
                     .offset(y: -40)
                 
-                Button {
-                    
-                } label: {
+                NavigationLink(destination: HomePage()) {
                     Image(systemName: "house")
                         .resizable()
                         .frame(width: 30, height: 30)
@@ -34,9 +32,7 @@ struct BottomBar: View {
                 
                 HStack{
                     Spacer()
-                    Button {
-                        
-                    } label: {
+                    NavigationLink(destination: ScanView()) {
                         Image(systemName: "document.viewfinder")
                             .resizable()
                             .frame(width: 30, height: 30)
