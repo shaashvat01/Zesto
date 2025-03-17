@@ -129,33 +129,48 @@ struct HomePage: View {
                                                 .fill(Color.black.opacity(0.1))
                                                 .frame(width: 175, height: 200)
                                             
-                                            VStack{
-                                                if let card = homeManager.getPopularCard(index: index-1){
-                                                    Text(card.dishName)
-                                                        .foregroundColor(.black)
-                                                        .font(.headline)
-                                                        .multilineTextAlignment(.center)
+                                            if let card = homeManager.getPopularCard(index: index-1){
+                                               
 
-                                                    AsyncImage(url: URL(string: card.imageURL ?? "")) { phase in
-                                                        if let image = phase.image {
-                                                            image
-                                                                .resizable()
-                                                                .scaledToFill()
-                                                                .frame(width: 150, height: 120)
-                                                                .clipped()
-                                                                .cornerRadius(10)
-                                                        } else if phase.error != nil {
-                                                            Image(systemName: "photo")
-                                                                .resizable()
-                                                                .scaledToFit()
-                                                                .frame(width: 50, height: 50)
-                                                                .foregroundColor(.gray)
-                                                        } else {
-                                                            ProgressView()
-                                                        }
+                                                AsyncImage(url: URL(string: card.imageURL ?? "")) { phase in
+                                                    if let image = phase.image {
+                                                        image
+                                                            .resizable()
+                                                            .scaledToFill()
+                                                            .frame(width: 175, height: 200)
+                                                            .clipped()
+                                                            .cornerRadius(10)
+                                                    } else if phase.error != nil {
+                                                        Image(systemName: "photo")
+                                                            .resizable()
+                                                            .scaledToFit()
+                                                            .frame(width: 50, height: 50)
+                                                            .foregroundColor(.gray)
+                                                    } else {
+                                                        ProgressView()
                                                     }
                                                 }
+                                                
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(
+                                                        LinearGradient(
+                                                            gradient: Gradient(colors: [Color.black.opacity(1), Color.clear]),
+                                                            startPoint: .bottom,
+                                                            endPoint: .top
+                                                        )
+                                                    )
+                                                    .frame(width: 175, height: 50)
+                                                    .offset(y: 75)
+                                                
+                                                Text(card.dishName)
+                                                    .foregroundColor(.white)
+                                                    .font(.headline)
+                                                    .fontWeight(.bold)
+                                                    .multilineTextAlignment(.center)
+                                                    .offset(y: 85)
                                             }
+                                            
+                                            
                                         }
                                         
                                     }
