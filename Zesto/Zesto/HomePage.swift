@@ -184,12 +184,18 @@ struct HomePage: View {
                 .frame(width:450 ,height: 700)
             
                 TopBar()
+                
+                VStack{
+                    
+                }
+                
                 BottomBar()
                 }
         
             
             
         }
+        .navigationBarBackButtonHidden(true)
     }
 
 
