@@ -10,11 +10,11 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 
 struct HomePage: View {
-    @StateObject var homeManager: HomeViewManager = HomeViewManager()
+    @ObservedObject var homeManager: HomeViewManager
     var body: some View {
-        NavigationView
+        VStack
         {
-            ZStack{
+            GeometryReader{ geometry in
                 ScrollView(.vertical) {
                             VStack(spacing: 10) {
                                 
@@ -180,29 +180,25 @@ struct HomePage: View {
                                     .padding()
                                 }
                             }
-                            
                             .padding()
+                            .frame(width: geometry.size.width)
+                            .frame(maxHeight: .infinity)
+                            
                         }
-                    .frame(width:450 ,height: 700)
+                    .frame(maxHeight: .infinity)
+                    //.frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .frame(width: geometry.size.width)
                 
-                    TopBar()
+                   
                     
-                    VStack{
-                        
                     }
                     
-                    BottomBar()
-                    }
             
                 
                 
             }
-        .navigationBarBackButtonHidden(true)
         }
         
     }
 
 
-#Preview {
-    HomePage()
-}

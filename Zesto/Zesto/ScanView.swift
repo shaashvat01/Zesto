@@ -20,8 +20,6 @@ struct ScanView: View {
         {
             VStack
             {
-                TopBar()
-                
                 VStack
                 {
                     Button(action: {
@@ -105,8 +103,7 @@ struct ScanView: View {
                         isShowingResult = true
                     }
                 }
-                
-                BottomBar()
+            
             }
             .navigationBarBackButtonHidden(true)
             .navigationDestination(isPresented: $isShowingResult)

@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct BottomBar: View {
+    @Binding var menuID: Int
     var body: some View {
         VStack{
-            Spacer()
             ZStack{
                 Rectangle()
                     .fill(Color.green.opacity(0.85))
@@ -22,7 +22,9 @@ struct BottomBar: View {
                     .frame(width: 50, height: 50)
                     .offset(y: -40)
                 
-                NavigationLink(destination: HomePage()) {
+                Button {
+                    menuID = 0
+                } label: {
                     Image(systemName: "house")
                         .resizable()
                         .frame(width: 30, height: 30)
@@ -32,15 +34,20 @@ struct BottomBar: View {
                 
                 HStack{
                     Spacer()
-                    NavigationLink(destination: ScanView()) {
+                    
+                    Button {
+                        menuID = 1
+                    } label: {
                         Image(systemName: "document.viewfinder")
                             .resizable()
                             .frame(width: 30, height: 30)
                             .foregroundColor(.black)
                     }
+                    
                     Spacer()
+                    
                     Button {
-                        
+                        menuID = 2
                     } label: {
                         Image(systemName: "pencil.and.list.clipboard")
                             .resizable()
@@ -49,7 +56,7 @@ struct BottomBar: View {
                     }
                     Spacer()
                     Button {
-                        
+                        menuID = 3
                     } label: {
                         Image(systemName: "ellipsis.message")
                             .resizable()
@@ -58,7 +65,7 @@ struct BottomBar: View {
                     }
                     Spacer()
                     Button {
-                        
+                        menuID = 4
                     } label: {
                         Image(systemName: "person.3")
                             .resizable()
@@ -81,5 +88,5 @@ struct BottomBar: View {
 }
 
 #Preview {
-    BottomBar()
+    BottomBar(menuID: .constant(0))
 }

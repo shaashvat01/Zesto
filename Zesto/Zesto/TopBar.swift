@@ -33,7 +33,6 @@ struct TopBar: View {
                 
             }
             .ignoresSafeArea(.all)
-            Spacer()
         }
         
     }
