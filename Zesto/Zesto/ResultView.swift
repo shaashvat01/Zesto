@@ -8,26 +8,50 @@
 import SwiftUI
 
 struct ResultView: View {
-    let image: UIImage
-    @StateObject private var viewModel = ResultViewModel()
+    // The final recognized items
+    let items: [ReceiptItem]
+    // Whether we are still loading
+    let isLoading: Bool
+    // Any leftover raw text from OpenAI
+    let openAIResponse: String
+    
+    // A callback for “Go Back”
+    let onGoBack: () -> Void
+    
+    @Environment(\.dismiss) var dismiss
+    
+    // For sheet-based editing
     @State private var selectedItem: ReceiptItem? = nil
-
+    
+    // For navigating to inventory
+    @State private var showInventory = false
+    
     var body: some View {
-        VStack
-        {
-            if viewModel.isLoading
-            {
+        VStack {
+            // Top buttons
+            HStack {
+                Button("Go Back") {
+                    // If you want to reset the scanning state in the parent:
+                    onGoBack()
+                    dismiss()
+                }
+                Spacer()
+                Button("Add to Inventory") {
+                    showInventory = true
+                }
+            }
+            .padding()
+
+            // If scanning is still ongoing, show a spinner
+            if isLoading {
                 ProgressView("Processing image...")
                     .padding()
             }
-            else
-            {
-                if !viewModel.receiptItems.isEmpty
-                {
-                    List
-                    {
-                        HStack
-                        {
+            else {
+                // If we have recognized items
+                if !items.isEmpty {
+                    List {
+                        HStack {
                             Text("Item")
                                 .fontWeight(.semibold)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -39,10 +63,9 @@ struct ResultView: View {
                                 .frame(maxWidth: .infinity, alignment: .trailing)
                         }
                         .padding(.vertical, 4)
-                        
-                        ForEach(viewModel.receiptItems){ item in
-                            HStack
-                            {
+
+                        ForEach(items) { item in
+                            HStack {
                                 Text(item.name)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 Text("\(item.quantity)")
@@ -52,59 +75,35 @@ struct ResultView: View {
                             }
                             .contentShape(Rectangle())
                             .onTapGesture {
+                                // Show a sheet to edit
                                 selectedItem = item
                             }
                             .padding(.vertical, 4)
                         }
-                        
                     }
-                }
-                else
-                {
-                    // Fallback: show raw OpenAI response if JSON decoding failed.
-                    ScrollView
-                    {
+                } else {
+                    // If no items, show raw OpenAI text or a message
+                    ScrollView {
                         Text("AI Analysis:")
                             .font(.headline)
-                        Text(viewModel.openAIResponse)
+                        Text(openAIResponse)
                             .padding()
                     }
                 }
             }
         }
         .navigationTitle("Scan Result")
-        .onAppear {
-            if viewModel.receiptItems.isEmpty {
-                viewModel.processImage(image)
-            }
-        }
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                EmptyView()
-            }
-        }
-        // Use the .sheet(item:) modifier which presents the sheet when selectedItem is non-nil.
         .sheet(item: $selectedItem) { item in
-            // Create a binding for the selected item using a helper function.
-            EditReceiptView(item: binding(for: item))
+            // We can pass a binding if we want to allow edits
+            // But we need to store the updated data somewhere in the parent
+            // For now, let's just pass a constant binding so it's read-only
+            EditReceiptView(item: .constant(item))
         }
-    }
-    
-    // Helper function to get a binding to the selected item in the view model array.
-    private func binding(for item: ReceiptItem) -> Binding<ReceiptItem> {
-        guard let index = viewModel.receiptItems.firstIndex(where: { $0.id == item.id }) else {
-            fatalError("Item not found in array")
+        // Navigate to the inventory screen
+        .navigationDestination(isPresented: $showInventory) {
+            InventoryView()
         }
-        return $viewModel.receiptItems[index]
     }
 }
 
-struct ResultView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            // Create a dummy image using a system image for preview purposes.
-            ResultView(image: UIImage(systemName: "photo") ?? UIImage())
-        }
-    }
-}

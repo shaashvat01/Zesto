@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ReceiptItem: Codable, Identifiable {
+struct ReceiptItem: Codable, Identifiable, Equatable {
     // Generate a unique ID locally (won't be decoded from JSON)
     let id = UUID()
     var name: String

@@ -8,32 +8,33 @@
 import SwiftUI
 
 struct MainView: View {
-    @State var menuID: Int = 0;
-    @StateObject var homeViewModel: HomeViewManager = HomeViewManager()
+    @State var menuID: Int = 0
+    @StateObject var homeViewModel = HomeViewManager()
+    
+    // Our single scanViewModel
+    @StateObject var scanViewModel = ScanViewModel()
+    
     var body: some View {
-        VStack(spacing: 0){
+        VStack(spacing: 0) {
             TopBar()
-            
             Spacer()
             
-            if(menuID == 0){
+            if menuID == 0 {
                 HomePage(homeManager: homeViewModel)
             }
-            else if(menuID == 1){
-                ScanView()
+            else if menuID == 1 {
+                // Pass the same scanViewModel so scanning state is preserved
+                ScanView(viewModel: scanViewModel)
             }
             
-            
             Spacer()
-            
             BottomBar(menuID: $menuID)
         }
         .ignoresSafeArea(.all)
-        
-        
-        
     }
 }
+
+
 
 #Preview {
     MainView()

@@ -5,43 +5,24 @@
 //  Created by Shaashvat Mittal on 3/15/25.
 //
 
-import Foundation
 import SwiftUI
 
 struct ScanView: View {
-    
-    @State private var showImagePicker = false
-    @State private var sourceType : UIImagePickerController.SourceType? = nil
-    @State private var selectedImage: UIImage? = nil
-    @State private var isShowingResult = false
-    
+    @ObservedObject var viewModel: ScanViewModel  // Provided by MainView
+
     var body: some View {
-        NavigationStack
-        {
-            VStack
-            {
-                VStack
-                {
-                    Button(action: {
-                        if UIImagePickerController.isSourceTypeAvailable(.camera)
-                        {
-                            sourceType = .camera
-                            showImagePicker = true
-                        }
-                        else
-                        {
-                            print("Camera not available")
-                        }
-                    }){
-                        VStack
-                        {
+        NavigationStack {
+            VStack {
+                VStack {
+                    Button {
+                        viewModel.pickCamera()
+                    } label: {
+                        VStack {
                             Image(systemName: "camera.fill")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 50, height: 50)
-                            
-                            Text("Camera")
-                                .font(.headline)
+                            Text("Camera").font(.headline)
                         }
                         .padding()
                         .frame(width: 150, height: 150)
@@ -50,26 +31,15 @@ struct ScanView: View {
                     }
                     .padding(.bottom, 90)
                     
-                    Button(action: {
-                        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
-                        {
-                            sourceType = .photoLibrary
-                            showImagePicker = true
-                        }
-                        else
-                        {
-                            print("Can't access photo library")
-                        }
-                    }){
-                        VStack
-                        {
+                    Button {
+                        viewModel.pickGallery()
+                    } label: {
+                        VStack {
                             Image(systemName: "photo.fill")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 50, height: 50)
-                            
-                            Text("Gallery")
-                                .font(.headline)
+                            Text("Gallery").font(.headline)
                         }
                         .padding()
                         .frame(width: 150, height: 150)
@@ -77,54 +47,44 @@ struct ScanView: View {
                         .cornerRadius(15)
                     }
                 }
-                .sheet(isPresented: Binding(get: {
-                    showImagePicker && sourceType != nil
-                }, set: { newValue in
-                    showImagePicker = newValue
-                    if !newValue
-                    {
-                        sourceType = nil
-                    }
-                }))
-                {
-                    if let sourceType = sourceType
-                    {
-                        ImagePicker(sourceType: sourceType, selectedImage: $selectedImage)
+                // Show the system's picker if needed
+                .sheet(isPresented: $viewModel.showImagePicker) {
+                    if let sourceType = viewModel.sourceType {
+                        ImagePicker(sourceType: sourceType, selectedImage: $viewModel.selectedImage)
                             .ignoresSafeArea()
                     }
                 }
-
-                
-                // Automatically navigate when an image is selected.
-                .onChange(of: selectedImage)
-                {
-                    if selectedImage != nil
-                    {
-                        isShowingResult = true
+                // When user selects an image, automatically process it and navigate
+                .onChange(of: viewModel.selectedImage) { newImage in
+                    if let image = newImage {
+                        // 1) Process the image
+                        viewModel.processImage(image)
+                        // 2) Show the result screen
+                        viewModel.isShowingResult = true
                     }
                 }
-            
             }
             .navigationBarBackButtonHidden(true)
-            .navigationDestination(isPresented: $isShowingResult)
-            {
-                if let image = selectedImage
-                {
-                    ResultView(image: image)
-                }
-                else
-                {
-                    Text("No image selected.")
-                }
-            }
             
+            // If isShowingResult is true, push the ResultView
+            .navigationDestination(isPresented: $viewModel.isShowingResult) {
+                // Pass the recognized items, loading state, etc. to the result
+                ResultView(
+                    items: viewModel.recognizedItems,
+                    isLoading: viewModel.isLoading,
+                    openAIResponse: viewModel.openAIResponse,
+                    onGoBack: {
+                        // If you want to reset scanning when user goes back:
+                        viewModel.reset()
+                    }
+                )
+            }
         }
     }
 }
 
-
-struct ImagePicker: UIViewControllerRepresentable
-{
+/// ImagePicker remains the same
+struct ImagePicker: UIViewControllerRepresentable {
     @Environment(\.presentationMode) private var presentationMode
     var sourceType: UIImagePickerController.SourceType
     @Binding var selectedImage: UIImage?
@@ -135,36 +95,31 @@ struct ImagePicker: UIViewControllerRepresentable
         picker.delegate = context.coordinator
         return picker
     }
-
+    
     func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
-        // all good here
+        // no updates needed
     }
-
-    func makeCoordinator() -> Coordinator
-    {
+    
+    func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-
-    class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate
-    {
+    
+    class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
         let parent: ImagePicker
-
-        init(_ parent: ImagePicker)
-        {
+        
+        init(_ parent: ImagePicker) {
             self.parent = parent
         }
-
-        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info:                           [UIImagePickerController.InfoKey : Any])
-        {
-            if let image = info[.originalImage] as? UIImage
-            {
+        
+        func imagePickerController(_ picker: UIImagePickerController,
+                                   didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            if let image = info[.originalImage] as? UIImage {
                 parent.selectedImage = image
             }
             parent.presentationMode.wrappedValue.dismiss()
         }
-
-        func imagePickerControllerDidCancel(_ picker: UIImagePickerController)
-        {
+        
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             parent.presentationMode.wrappedValue.dismiss()
         }
     }
@@ -173,10 +128,7 @@ struct ImagePicker: UIViewControllerRepresentable
 
 struct ScanView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            ScanView()
-        }
+        // Provide a dummy ScanViewModel for preview
+        ScanView(viewModel: ScanViewModel())
     }
 }
-
-
