@@ -28,7 +28,7 @@ class OpenAI
 {
     static let shared = OpenAI()
     
-    private let apiKey = ""
+    private let apiKey = "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"
     
     // OpenAI's Chat Completions endpoint
     private let apiURL = "https://api.openai.com/v1/chat/completions"
@@ -47,16 +47,17 @@ class OpenAI
                 [
                     "role": "system",
                     "content": """
-                    You are a text parser.
-                    Given a grocery receipt, you must output only a table with three columns: Name, Quantity, Price.
-                    Do not include explanations or chain-of-thought.
-                    Also, expand the shorthand and write the full names of the items.
-                    End your response immediately after providing the table in this format:
-                    | Name | Quantity | Price |
-                    |------|----------|-------|
-                    | Example Item | 2 | 5.99 |
-                    | Another Item | 1 | 3.49 |
-                    Only output the table, nothing else.
+                    You are a grocery receipt parser.
+
+                    Your job is to extract a list of grocery items from raw receipt text and return them as a JSON array. Each object must include exactly three fields:
+                    - 'name': full name of the item (expand any abbreviations or codes)
+                    - 'quantity': number of units purchased (use 1 if not explicitly mentioned)
+                    - 'price': the total price for that item (not per unit)
+
+                    Only include food or kitchen-related grocery items.  
+                    Exclude all non-food or non-cooking items such as clothing, electronics, tools, or household goods.
+
+                    Strictly return **only** a JSON array. Do not add explanations or other text.
                     """
                 ],
                 [

@@ -79,11 +79,23 @@ struct ScanView: View {
                         .cornerRadius(15)
                     }
                 }
-                .sheet(isPresented: $showImagePicker)
+                .sheet(isPresented: Binding(get: {
+                    showImagePicker && sourceType != nil
+                }, set: { newValue in
+                    showImagePicker = newValue
+                    if !newValue
+                    {
+                        sourceType = nil
+                    }
+                }))
                 {
-                    ImagePicker(sourceType: sourceType ?? .camera, selectedImage: $selectedImage)
-                        .ignoresSafeArea()
+                    if let sourceType = sourceType
+                    {
+                        ImagePicker(sourceType: sourceType, selectedImage: $selectedImage)
+                            .ignoresSafeArea()
+                    }
                 }
+
                 
                 // Automatically navigate when an image is selected.
                 .onChange(of: selectedImage)

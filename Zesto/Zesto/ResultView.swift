@@ -8,30 +8,75 @@
 import SwiftUI
 
 struct ResultView: View {
-    
     let image: UIImage
-
-    @State private var recognizedText: String = ""
-    @State private var openAIResponse: String = ""
-    @State private var isLoading: Bool = true
+    @StateObject private var viewModel = ResultViewModel()
+    @State private var selectedItem: ReceiptItem? = nil
 
     var body: some View {
-        VStack {
-            if isLoading {
+        VStack
+        {
+            if viewModel.isLoading
+            {
                 ProgressView("Processing image...")
                     .padding()
-            } else {
-                ScrollView {
-                    Text("OpenAI Analysis:")
-                        .font(.headline)
-                    Text(openAIResponse)
-                        .padding()
+            }
+            else
+            {
+                if !viewModel.receiptItems.isEmpty
+                {
+                    List
+                    {
+                        HStack
+                        {
+                            Text("Item")
+                                .fontWeight(.semibold)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("Quantity")
+                                .fontWeight(.semibold)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                            Text("Price")
+                                .fontWeight(.semibold)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                        }
+                        .padding(.vertical, 4)
+                        
+                        ForEach(viewModel.receiptItems){ item in
+                            HStack
+                            {
+                                Text(item.name)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Text("\(item.quantity)")
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                                Text(String(format: "$%.2f", item.price))
+                                    .frame(maxWidth: .infinity, alignment: .trailing)
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                selectedItem = item
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        
+                    }
+                }
+                else
+                {
+                    // Fallback: show raw OpenAI response if JSON decoding failed.
+                    ScrollView
+                    {
+                        Text("AI Analysis:")
+                            .font(.headline)
+                        Text(viewModel.openAIResponse)
+                            .padding()
+                    }
                 }
             }
         }
         .navigationTitle("Scan Result")
         .onAppear {
-            processImage()
+            if viewModel.receiptItems.isEmpty {
+                viewModel.processImage(image)
+            }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -39,26 +84,27 @@ struct ResultView: View {
                 EmptyView()
             }
         }
+        // Use the .sheet(item:) modifier which presents the sheet when selectedItem is non-nil.
+        .sheet(item: $selectedItem) { item in
+            // Create a binding for the selected item using a helper function.
+            EditReceiptView(item: binding(for: item))
+        }
     }
+    
+    // Helper function to get a binding to the selected item in the view model array.
+    private func binding(for item: ReceiptItem) -> Binding<ReceiptItem> {
+        guard let index = viewModel.receiptItems.firstIndex(where: { $0.id == item.id }) else {
+            fatalError("Item not found in array")
+        }
+        return $viewModel.receiptItems[index]
+    }
+}
 
-    func processImage() {
-        // Use VisionManager to extract text from the image.
-        VisionManager.shared.recognizeText(from: image) { text in
-            if let text = text, !text.isEmpty {
-                self.recognizedText = text
-                // Sending the extracted text to OpenAI.
-                OpenAI.shared.processImage(text) { response in
-                    if let response = response {
-                        self.openAIResponse = response
-                    } else {
-                        self.openAIResponse = "No response from API."
-                    }
-                    self.isLoading = false
-                }
-            } else {
-                self.recognizedText = "No text found."
-                self.isLoading = false
-            }
+struct ResultView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationView {
+            // Create a dummy image using a system image for preview purposes.
+            ResultView(image: UIImage(systemName: "photo") ?? UIImage())
         }
     }
 }

@@ -14,9 +14,22 @@
 		50824C7D2D7E53E900BA3673 /* Zesto.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zesto.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		504C423E2D8A3B64008C9C9E /* Exceptions for "Zesto" folder in "Zesto" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 50824C7C2D7E53E900BA3673 /* Zesto */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		50824C7F2D7E53E900BA3673 /* Zesto */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				504C423E2D8A3B64008C9C9E /* Exceptions for "Zesto" folder in "Zesto" target */,
+			);
 			path = Zesto;
 			sourceTree = "<group>";
 		};
@@ -261,9 +274,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Zesto/Preview Content\"";
-				DEVELOPMENT_TEAM = J6XY4HJFNM;
+				DEVELOPMENT_TEAM = ACC526GGGD;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Zesto/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -274,7 +288,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.SaiManikandan.Zesto;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shaashvatmittal.Zesto;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -293,6 +307,7 @@
 				DEVELOPMENT_TEAM = J6XY4HJFNM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Zesto/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
