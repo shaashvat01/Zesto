@@ -11,7 +11,7 @@ import SwiftUI
 struct ZestoApp: App {
     var body: some Scene {
         WindowGroup {
-            HomePage()
+            MainView()
         }
     }
 }
