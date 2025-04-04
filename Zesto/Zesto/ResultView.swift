@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct ResultView: View {
-    let items: [ReceiptItem]
+    @Binding var items: [ReceiptItem]
     let isLoading: Bool
     let openAIResponse: String
     let onGoBack: () -> Void
@@ -20,6 +20,14 @@ struct ResultView: View {
 
     @State private var selectedItem: ReceiptItem? = nil
     @State private var isAddingToInventory = false
+    
+    private func binding(for item: ReceiptItem) -> Binding<ReceiptItem> {
+        guard let index = items.firstIndex(where: { $0.id == item.id }) else {
+            fatalError("Item not found")
+        }
+        return $items[index]
+    }
+
 
     var body: some View {
         ZStack {
@@ -112,7 +120,8 @@ struct ResultView: View {
         .navigationTitle("Scan Result")
         .navigationBarBackButtonHidden(true)
         .sheet(item: $selectedItem) { item in
-            EditReceiptView(item: .constant(item))
+            EditReceiptView(item: binding(for: item))
         }
+
     }
 }

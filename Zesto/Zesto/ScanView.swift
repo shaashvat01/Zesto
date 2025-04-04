@@ -69,15 +69,15 @@ struct ScanView: View {
             
             // If isShowingResult is true, push the ResultView
             .navigationDestination(isPresented: $viewModel.isShowingResult) {
-                // Pass the recognized items, loading state, etc. to the result
                 ResultView(
-                    items: viewModel.recognizedItems,
+                    items: $viewModel.recognizedItems,
                     isLoading: viewModel.isLoading,
                     openAIResponse: viewModel.openAIResponse,
                     onGoBack: { viewModel.reset() },
                     inventoryVM: inventoryVM
                 )
             }
+
         }
     }
 }
