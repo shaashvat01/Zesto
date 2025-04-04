@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		8164D8882DA0674000BF26FF /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 8164D8872DA0674000BF26FF /* Lottie */; };
-		8172E6862D8A372C0093E19C /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 8172E6852D8A372C0093E19C /* Alamofire */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,7 +40,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8172E6862D8A372C0093E19C /* Alamofire in Frameworks */,
 				8164D8882DA0674000BF26FF /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -85,7 +83,6 @@
 			);
 			name = Zesto;
 			packageProductDependencies = (
-				8172E6852D8A372C0093E19C /* Alamofire */,
 				8164D8872DA0674000BF26FF /* Lottie */,
 			);
 			productName = Zesto;
@@ -117,7 +114,6 @@
 			mainGroup = 50824C742D7E53E900BA3673;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				8172E6842D8A372C0093E19C /* XCRemoteSwiftPackageReference "Alamofire" */,
 				8164D8862DA0674000BF26FF /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -362,14 +358,6 @@
 				minimumVersion = 4.5.1;
 			};
 		};
-		8172E6842D8A372C0093E19C /* XCRemoteSwiftPackageReference "Alamofire" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Alamofire/Alamofire";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.10.2;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -377,11 +365,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8164D8862DA0674000BF26FF /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
-		};
-		8172E6852D8A372C0093E19C /* Alamofire */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 8172E6842D8A372C0093E19C /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
