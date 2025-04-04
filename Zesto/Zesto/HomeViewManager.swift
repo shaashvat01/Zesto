@@ -9,6 +9,22 @@ import Foundation
 import CoreImage
 import CoreImage.CIFilterBuiltins
 import UIKit
+import SwiftUICore
+
+let insightCardColors: [Color] = [
+    Color.blue,
+    Color.green,
+    Color.orange,
+    Color.red,
+    Color.purple,
+    Color.teal,
+    Color.pink,
+    Color.yellow,
+    Color.indigo,
+    Color.mint,
+    Color.cyan,
+    Color.brown
+]
 
 struct ImageResponse: Codable {
     let image_url: String
@@ -41,8 +57,8 @@ class HomeViewManager: ObservableObject {
     
     init() {
         let mealTimes = ["Breakfast", "Lunch", "Dinner", "Snack"]
-        let dishNames = ["Pancakes", "Grilled Cheese", "Pasta", "Salad", "Tacos", "Soup", "Sushi", "Pizza", "Burger", "Chicken Tikka Masala", "Biryani", "Momos", "Noodles", "Roti", "Samosa"]
-
+        let dishNames = ["Big Mac", "Beef Rendang", "Chakchouka", "Bakewell tart", "French Onion Soup", "Potato Salad (Olivier Salad)"
+        ]
         // Generate 4 random recommended cards with image fetching
         for index in 1...4 {
             let randomMealTime = mealTimes[index-1]
@@ -71,8 +87,50 @@ class HomeViewManager: ObservableObject {
         }
     }
     
+    // image URL fetch for MealDB service [Currently only returns URL BUT CAN RETURN ENTIRE RECIPIE OBJECT]
+    func fetchImageMealDB(for dishName: String, completion: @escaping (String?) -> Void) {
+        let placeholderURL = "https://via.placeholder.com/150"
+        let baseURL = "https://www.themealdb.com/api/json/v1/1/search.php?s="
 
+        guard let encodedDish = dishName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let url = URL(string: "\(baseURL)\(encodedDish)") else {
+            print("❌ Invalid URL for dish: \(dishName)")
+            completion(placeholderURL)
+            return
+        }
+
+        print("🌍 Fetching image from: \(url)")
+
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("❌ Error fetching image: \(error.localizedDescription)")
+                completion(placeholderURL)
+                return
+            }
+
+            guard let data = data else {
+                print("❌ No data received for image request.")
+                completion(placeholderURL)
+                return
+            }
+
+            do {
+                let response = try JSONDecoder().decode(MealDBResponse.self, from: data)
+                let imageUrl = response.meals?.first?.strMealThumb ?? placeholderURL
+
+                print("✅ Successfully fetched image URL: \(imageUrl)")
+
+                DispatchQueue.main.async {
+                    completion(imageUrl)
+                }
+            } catch {
+                print("❌ Failed to decode JSON: \(error)")
+                completion(placeholderURL)
+            }
+        }.resume()
+    }
     
+    // WebScraper URL fetch service
     func fetchImage(for dishName: String, completion: @escaping (String?) -> Void) {
         let placeholderURL = "https://via.placeholder.com/150"
 
@@ -120,7 +178,7 @@ class HomeViewManager: ObservableObject {
             self.recommendCards.append(RecommendCardHome(mealTime: mealTime, dishName: dishName, imageURL: imageURL))
         }
         else{
-            fetchImage(for: dishName) { imageUrl in
+            fetchImageMealDB(for: dishName) { imageUrl in
                     DispatchQueue.main.async {
                         self.objectWillChange.send()
                         self.recommendCards.append(RecommendCardHome(mealTime: mealTime, dishName: dishName, imageURL: imageUrl ?? ""))
@@ -132,7 +190,8 @@ class HomeViewManager: ObservableObject {
     }
     
     func addInsightCard(message: String){
-        self.insightCards.append(InsightsCardHome(message: message))
+        let randomColor = insightCardColors[Int.random(in: 0..<insightCardColors.count)]
+        self.insightCards.append(InsightsCardHome(message: message,Color: randomColor))
     }
     
     func addPopularCard(dishName: String, imageURL: String?){
@@ -140,7 +199,7 @@ class HomeViewManager: ObservableObject {
             self.popularCards.append(PopularDishesCardHome(dishName: dishName, imageURL: imageURL))
         }
         else{
-            fetchImage(for: dishName) { imageUrl in
+            fetchImageMealDB(for: dishName) { imageUrl in
                     DispatchQueue.main.async {
                         self.objectWillChange.send()
                         self.popularCards.append(PopularDishesCardHome(dishName: dishName, imageURL: imageUrl ?? ""))
