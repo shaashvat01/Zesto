@@ -12,92 +12,106 @@ struct ResultView: View {
     let items: [ReceiptItem]
     let isLoading: Bool
     let openAIResponse: String
-    
-    // Callback for going back
     let onGoBack: () -> Void
-
-    // NEW: A reference to your InventoryViewModel
     @ObservedObject var inventoryVM: InventoryViewModel
-    
-    // Access to the SwiftData context
-    @Environment(\.modelContext) private var modelContext
-    
-    @Environment(\.dismiss) var dismiss
-    
-    @State private var selectedItem: ReceiptItem? = nil
-    //@State private var showInventory = false
-    
-    var body: some View {
-        VStack {
-            HStack {
-                Button("Go Back") {
-                    onGoBack()
-                    dismiss()
-                }
-                Spacer()
-                Button("Add to Inventory") {
-                    // Convert the scanned items => Inventory
-                    inventoryVM.addToInventory(items, context: modelContext)
-                    // Possibly navigate to inventory
-                    //showInventory = false
-                }
-            }
-            .padding()
-            
-            if isLoading {
-                ProgressView("Processing image...")
-                    .padding()
-            } else {
-                if !items.isEmpty {
-                    List {
-                        HStack {
-                            Text("Item").fontWeight(.semibold)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("Quantity").fontWeight(.semibold)
-                                .frame(maxWidth: .infinity, alignment: .center)
-                            Text("Price").fontWeight(.semibold)
-                                .frame(maxWidth: .infinity, alignment: .trailing)
-                        }
-                        .padding(.vertical, 4)
 
-                        ForEach(items) { item in
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) var dismiss
+
+    @State private var selectedItem: ReceiptItem? = nil
+    @State private var isAddingToInventory = false
+
+    var body: some View {
+        ZStack {
+            // Main content
+            VStack {
+                HStack {
+                    Button("Go Back") {
+                        onGoBack()
+                        dismiss()
+                    }
+                    Spacer()
+                    Button("Add to Inventory") {
+                        // Add to SwiftData
+                        inventoryVM.addToInventory(items, context: modelContext)
+
+                        // Show animation state
+                        isAddingToInventory = true
+
+                        // After delay, go back
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                            onGoBack()
+                            dismiss()
+                        }
+                    }
+                }
+                .padding()
+
+                if isLoading {
+                    ProgressView("Processing image...")
+                        .padding()
+                } else {
+                    if !items.isEmpty {
+                        List {
                             HStack {
-                                Text(item.name)
+                                Text("Item").fontWeight(.semibold)
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                Text("\(item.quantity)")
+                                Text("Quantity").fontWeight(.semibold)
                                     .frame(maxWidth: .infinity, alignment: .center)
-                                Text(String(format: "$%.2f", item.price))
+                                Text("Price").fontWeight(.semibold)
                                     .frame(maxWidth: .infinity, alignment: .trailing)
                             }
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                selectedItem = item
-                            }
                             .padding(.vertical, 4)
+
+                            ForEach(items) { item in
+                                HStack {
+                                    Text(item.name)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    Text("\(item.quantity)")
+                                        .frame(maxWidth: .infinity, alignment: .center)
+                                    Text(String(format: "$%.2f", item.price))
+                                        .frame(maxWidth: .infinity, alignment: .trailing)
+                                }
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    selectedItem = item
+                                }
+                                .padding(.vertical, 4)
+                            }
+                        }
+                    } else {
+                        ScrollView {
+                            Text("AI Analysis:")
+                                .font(.headline)
+                            Text(openAIResponse)
+                                .padding()
                         }
                     }
-                } else {
-                    ScrollView {
-                        Text("AI Analysis:")
-                            .font(.headline)
-                        Text(openAIResponse)
-                            .padding()
-                    }
                 }
+            }
+            .blur(radius: isAddingToInventory ? 10 : 0)  // Optional blur behind overlay
+
+            
+            if isAddingToInventory {
+                VStack(spacing: 12) {
+                    LottieView(animationName: "inventoryLottie") // file name without `.json`
+                        .frame(width: 50, height: 50) // Adjust size here
+                        .scaleEffect(0.2)
+                    
+//                    Text("Added to Inventory")
+//                        .font(.title3)
+//                        .bold()
+//                        .foregroundColor(.primary)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color(.systemBackground).opacity(0.9))
+                .ignoresSafeArea()
             }
         }
         .navigationTitle("Scan Result")
         .navigationBarBackButtonHidden(true)
         .sheet(item: $selectedItem) { item in
-            // For editing a single item
-            // you'd need a mechanism to save changes
-            // to recognizedItems in the parent
             EditReceiptView(item: .constant(item))
         }
-        // Navigate to Inventory
-//        .navigationDestination(isPresented: $showInventory) {
-//            // Provide the same inventoryVM
-//            InventoryView(viewModel: inventoryVM)
-//        }
     }
 }
