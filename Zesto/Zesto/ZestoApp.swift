@@ -12,6 +12,7 @@ struct ZestoApp: App {
     var body: some Scene {
         WindowGroup {
             MainView()
+                .modelContainer(for: [InventoryItem.self])
         }
     }
 }

@@ -5,22 +5,46 @@
 //  Created by Shaashvat Mittal on 4/3/25.
 //
 
-// InventoryView.swift
 import SwiftUI
+import SwiftData
 
 struct InventoryView: View {
+    @ObservedObject var viewModel: InventoryViewModel
+    // SwiftData auto-fetched items
+    @Query var allItems: [InventoryItem]
+    
     var body: some View {
-        VStack {
-            Text("Inventory Screen")
-                .font(.title)
-                .padding()
-            
-            // In the future, you can show the stored items,
-            // or do something else with them
-            Spacer()
+        NavigationView {
+            VStack {
+                Text("Inventory Screen")
+                    .font(.title)
+                    .padding()
+
+                List {
+                    ForEach(allItems) { item in
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(item.name)
+                                .font(.headline)
+                            Text("Qty: \(item.quantity) | Price: \(item.price)")
+                                .font(.subheadline)
+                        }
+                        .swipeActions {
+                            Button(role: .destructive) {
+                                if let context = item.modelContext {
+                                    viewModel.removeItem(item, context: context)
+                                }
+                            } label: {
+                                Text("Delete")
+                            }
+                        }
+                    }
+                }
+                .listStyle(.insetGrouped)
+            }
+            .navigationTitle("My Inventory")
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationTitle("My Inventory")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
+
 

@@ -9,7 +9,8 @@ import SwiftUI
 
 struct ScanView: View {
     @ObservedObject var viewModel: ScanViewModel  // Provided by MainView
-
+    @ObservedObject var inventoryVM: InventoryViewModel
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -73,10 +74,8 @@ struct ScanView: View {
                     items: viewModel.recognizedItems,
                     isLoading: viewModel.isLoading,
                     openAIResponse: viewModel.openAIResponse,
-                    onGoBack: {
-                        // If you want to reset scanning when user goes back:
-                        viewModel.reset()
-                    }
+                    onGoBack: { viewModel.reset() },
+                    inventoryVM: inventoryVM
                 )
             }
         }
@@ -125,10 +124,3 @@ struct ImagePicker: UIViewControllerRepresentable {
     }
 }
 
-
-struct ScanView_Previews: PreviewProvider {
-    static var previews: some View {
-        // Provide a dummy ScanViewModel for preview
-        ScanView(viewModel: ScanViewModel())
-    }
-}

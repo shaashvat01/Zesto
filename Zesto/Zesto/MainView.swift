@@ -14,6 +14,8 @@ struct MainView: View {
     // Our single scanViewModel
     @StateObject var scanViewModel = ScanViewModel()
     
+    @StateObject var inventoryViewModel = InventoryViewModel()
+    
     var body: some View {
         VStack(spacing: 0) {
             TopBar()
@@ -23,8 +25,10 @@ struct MainView: View {
                 HomePage(homeManager: homeViewModel)
             }
             else if menuID == 1 {
-                // Pass the same scanViewModel so scanning state is preserved
-                ScanView(viewModel: scanViewModel)
+                ScanView(viewModel: scanViewModel, inventoryVM: inventoryViewModel)
+            }
+            else if menuID == 2{
+                InventoryView(viewModel: inventoryViewModel)
             }
             
             Spacer()
