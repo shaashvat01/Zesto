@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		50770C502D9F664400BCDFEF /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 50770C4F2D9F664400BCDFEF /* Lottie */; };
+		8164D8882DA0674000BF26FF /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 8164D8872DA0674000BF26FF /* Lottie */; };
+		8172E6862D8A372C0093E19C /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 8172E6852D8A372C0093E19C /* Alamofire */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,7 +41,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50770C502D9F664400BCDFEF /* Lottie in Frameworks */,
+				8172E6862D8A372C0093E19C /* Alamofire in Frameworks */,
+				8164D8882DA0674000BF26FF /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,7 +85,8 @@
 			);
 			name = Zesto;
 			packageProductDependencies = (
-				50770C4F2D9F664400BCDFEF /* Lottie */,
+				8172E6852D8A372C0093E19C /* Alamofire */,
+				8164D8872DA0674000BF26FF /* Lottie */,
 			);
 			productName = Zesto;
 			productReference = 50824C7D2D7E53E900BA3673 /* Zesto.app */;
@@ -114,7 +117,8 @@
 			mainGroup = 50824C742D7E53E900BA3673;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				50770C4E2D9F664400BCDFEF /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				8172E6842D8A372C0093E19C /* XCRemoteSwiftPackageReference "Alamofire" */,
+				8164D8862DA0674000BF26FF /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 50824C7E2D7E53E900BA3673 /* Products */;
@@ -350,7 +354,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		50770C4E2D9F664400BCDFEF /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+		8164D8862DA0674000BF26FF /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios";
 			requirement = {
@@ -358,13 +362,26 @@
 				minimumVersion = 4.5.1;
 			};
 		};
+		8172E6842D8A372C0093E19C /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		50770C4F2D9F664400BCDFEF /* Lottie */ = {
+		8164D8872DA0674000BF26FF /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 50770C4E2D9F664400BCDFEF /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			package = 8164D8862DA0674000BF26FF /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
+		};
+		8172E6852D8A372C0093E19C /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8172E6842D8A372C0093E19C /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

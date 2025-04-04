@@ -86,7 +86,6 @@ struct HomePage: View {
                                             
                                         }
                                     }
-                                    .padding()
                                 }
                                 
                                 Text("AI Insights")
@@ -97,13 +96,18 @@ struct HomePage: View {
 
                                 ScrollView(.horizontal, showsIndicators: false) {
                                     HStack(spacing: 15) {
-                                        ForEach(1...10, id: \.self) { index in
+                                        ForEach(1...4, id: \.self) { index in
                                             ZStack{
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(Color.black.opacity(0.1))
-                                                    .frame(width: 175, height: 200)
-                                                
                                                 if let card = homeManager.getInsightCard(index: index-1) {
+                                                    RoundedRectangle(cornerRadius: 10)
+                                                        .fill(
+                                                            LinearGradient(
+                                                                gradient: Gradient(colors: [card.Color.opacity(0.2), card.Color.opacity(0.05)]),
+                                                            startPoint: .bottom,
+                                                            endPoint: .top
+                                                        ))
+                                                        .frame(width: 175, height: 200)
+                                                    
                                                     Text(card.message)
                                                         .foregroundColor(.black)
                                                         .font(.headline)
@@ -114,7 +118,6 @@ struct HomePage: View {
                                             
                                         }
                                     }
-                                    .padding()
                                 }
                                 
                                 Text("Popular Dishes")
@@ -177,7 +180,6 @@ struct HomePage: View {
                                             
                                         }
                                     }
-                                    .padding()
                                 }
                             }
                             .padding()
@@ -192,13 +194,12 @@ struct HomePage: View {
                    
                     
                     }
-                    
-            
-                
-                
             }
         }
         
+        
     }
 
-
+#Preview {
+    HomePage(homeManager: HomeViewManager())
+}
