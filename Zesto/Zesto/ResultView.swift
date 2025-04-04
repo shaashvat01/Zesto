@@ -39,7 +39,7 @@ struct ResultView: View {
                         isAddingToInventory = true
 
                         // After delay, go back
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.75) {
                             onGoBack()
                             dismiss()
                         }
@@ -97,11 +97,12 @@ struct ResultView: View {
                     LottieView(animationName: "inventoryLottie") // file name without `.json`
                         .frame(width: 50, height: 50) // Adjust size here
                         .scaleEffect(0.2)
+                        .padding(.bottom, 60)
                     
-//                    Text("Added to Inventory")
-//                        .font(.title3)
-//                        .bold()
-//                        .foregroundColor(.primary)
+                    Text("Added to Inventory")
+                        .font(.title3)
+                        .bold()
+                        .foregroundColor(.primary)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color(.systemBackground).opacity(0.9))
