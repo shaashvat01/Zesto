@@ -27,7 +27,7 @@ class OpenAI
 {
     static let shared = OpenAI()
     
-    private let apiKey = ""
+    private let apiKey = "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"
     private let apiURL = "https://api.openai.com/v1/chat/completions"
     
     func processImage(_ text: String, completion: @escaping (String?) -> Void)
