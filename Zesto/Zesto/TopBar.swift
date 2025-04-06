@@ -12,12 +12,9 @@ struct TopBar: View {
         VStack{
             ZStack{
                 Rectangle()
-                    .fill(Color.green.opacity(0.85))
+                    .fill(Color.white)
                     .frame(width: 500, height: 92)
-                
-                Text("Zesto")
-                    .font(.system(size: 40, weight: .bold, design: .default))
-                    .offset(x: -120, y: 20)
+                    .shadow(radius: 2)
                 
                 
                 Button {

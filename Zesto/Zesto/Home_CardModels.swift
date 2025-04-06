@@ -21,6 +21,7 @@ struct RecommendCardHome: Identifiable {
     let mealTime: String
     let dishName: String
     var imageURL: String?
+    var RecipeModel: RecipeModel?
 }
 
 struct InsightsCardHome: Identifiable {
@@ -33,6 +34,7 @@ struct PopularDishesCardHome: Identifiable {
     let id = UUID()
     let dishName: String
     var imageURL: String?
+    var RecipeModel: RecipeModel?
 }
 
 
