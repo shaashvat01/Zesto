@@ -20,7 +20,7 @@ class ScanViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var recognizedItems: [ReceiptItem] = []
     @Published var openAIResponse: String = ""
-
+    
     func pickCamera() {
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             sourceType = .camera
@@ -40,7 +40,7 @@ class ScanViewModel: ObservableObject {
     }
     
     func reset() {
-        // If you want to fully reset state, call this:
+        // Fully reset state
         selectedImage = nil
         sourceType = nil
         isShowingResult = false
@@ -48,8 +48,9 @@ class ScanViewModel: ObservableObject {
         openAIResponse = ""
         isLoading = false
     }
-
-    // The main scanning logic
+    
+    // MARK: - Main Scanning Logic
+    
     func processImage(_ image: UIImage) {
         isLoading = true
         
@@ -64,8 +65,11 @@ class ScanViewModel: ObservableObject {
                     return
                 }
                 
-                // 2) Send recognized text to OpenAI
-                OpenAI.shared.processImage(text) { response in
+                // Clean the OCR text before sending to GPT
+                let cleanedText = self.cleanOCRText(text)
+                
+                // 2) Send cleaned text to OpenAI
+                OpenAI.shared.processImage(cleanedText) { response in
                     DispatchQueue.main.async {
                         guard let response = response, !response.isEmpty else {
                             self.openAIResponse = "No response from API."
@@ -73,24 +77,94 @@ class ScanViewModel: ObservableObject {
                             return
                         }
                         
-                        // Attempt to decode items from the JSON returned by OpenAI
+                        // First attempt: try to decode JSON directly
                         if let data = response.data(using: .utf8) {
                             do {
                                 let items = try JSONDecoder().decode([ReceiptItem].self, from: data)
                                 self.recognizedItems = items
+                                self.isLoading = false
                             } catch {
-                                print("Failed to decode items: \(error)")
-                                // If decoding fails, store raw text in openAIResponse
-                                self.openAIResponse = response
+                                print("Initial decoding failed: \(error)")
+                                
+                                // Interactive approach: Ask GPT for a corrected response
+                                var followUpPrompt = """
+                                Your previous response wasn't valid JSON. Please return only valid JSON with the structure:
+                                {"name":"Tomatoes","quantity":1,"price":2.50}, ...
+                                """
+                                
+                                // Optionally, append the original response for context
+                                followUpPrompt += "\n\nOriginal Response:\n\(response)"
+                                
+                                OpenAI.shared.processImage(followUpPrompt) { retryResponse in
+                                    DispatchQueue.main.async {
+                                        guard let retryResponse = retryResponse, !retryResponse.isEmpty else {
+                                            self.openAIResponse = "No response from API on retry."
+                                            self.isLoading = false
+                                            return
+                                        }
+                                        
+                                        if let retryData = retryResponse.data(using: .utf8) {
+                                            do {
+                                                let items = try JSONDecoder().decode([ReceiptItem].self, from: retryData)
+                                                self.recognizedItems = items
+                                            } catch {
+                                                print("Retry decoding failed: \(error)")
+                                                // If it still fails, show the raw retry response
+                                                self.openAIResponse = retryResponse
+                                            }
+                                        } else {
+                                            self.openAIResponse = retryResponse
+                                        }
+                                        self.isLoading = false
+                                    }
+                                }
                             }
                         } else {
                             self.openAIResponse = response
+                            self.isLoading = false
                         }
-                        self.isLoading = false
                     }
                 }
             }
         }
     }
+    
+    
+    // Cleans the raw OCR text by filtering out lines that are not likely to be items
+    // and recombining lines if the item name and price are split.
+    func cleanOCRText(_ rawText: String) -> String {
+        let lines = rawText.components(separatedBy: .newlines)
+        
+        // Filter out known non-item lines
+        let filteredLines = lines.filter { line in
+            let lower = line.lowercased()
+            return !lower.contains("total")
+                && !lower.contains("tax")
+                && !lower.contains("change")
+                && !lower.contains("payment")
+                && !lower.contains("order")
+                && !lower.contains("credit")
+        }
+        
+        // Combine lines where the price might have been split onto a separate line.
+        // If a line is just a price (a number), append it to the previous line.
+        var combinedLines: [String] = []
+        for line in filteredLines {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if isPrice(trimmed), let last = combinedLines.popLast() {
+                combinedLines.append(last + " " + trimmed)
+            } else {
+                combinedLines.append(line)
+            }
+        }
+        
+        return combinedLines.joined(separator: "\n")
+    }
+    
+    // Checks if a given string represents a price.
+    func isPrice(_ string: String) -> Bool {
+        // Remove any potential dollar signs or spaces
+        let cleaned = string.replacingOccurrences(of: "$", with: "").trimmingCharacters(in: .whitespaces)
+        return Double(cleaned) != nil
+    }
 }
-

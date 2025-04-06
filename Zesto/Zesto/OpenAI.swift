@@ -62,6 +62,12 @@ class OpenAI
 
                     Only include food or kitchen-related grocery items.
                     Exclude all non-food or non-cooking items such as clothing, electronics, tools, or household goods.
+                    
+                    Some receipt items are weight-based and include a weight and a unit price, followed by a total price. Their format is generally:
+                    ITEM NAME WEIGHT lb @ UNIT_PRICE/lb TOTAL_PRICE
+                    For these lines, treat everything before the weight as the item name, default the quantity to 1, and take the final number as the total price.
+                    Apply this rule to all weight-based items.
+
 
                     Strictly return **only** a JSON array. Do not add explanations or other text.
                     """
