@@ -10,7 +10,7 @@ import SwiftUI
 struct ScanView: View {
     @ObservedObject var viewModel: ScanViewModel  // Provided by MainView
     @ObservedObject var inventoryVM: InventoryViewModel
-    
+    @EnvironmentObject var appState: AppState
     var body: some View {
         NavigationStack {
             VStack {

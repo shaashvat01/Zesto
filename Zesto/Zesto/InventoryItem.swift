@@ -15,10 +15,12 @@ class InventoryItem {
     var name: String
     var quantity: Int
     var price: Double
+    var imageURL: String?
     
-    init(name: String, quantity: Int, price: Double) {
+    init(name: String, quantity: Int, price: Double, imageURL: String? = nil) {
         self.name = name
         self.quantity = quantity
         self.price = price
+        self.imageURL = imageURL
     }
 }

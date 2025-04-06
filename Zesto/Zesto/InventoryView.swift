@@ -90,12 +90,38 @@ struct InventoryView: View {
                         HStack(alignment: .center, spacing: 16)
                         {
                             // Thumbnail image (placeholder)
-                            Image("Apple")
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 50, height: 50)
-                                .clipped()
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
+//                            Image("Apple")
+//                                .resizable()
+//                                .scaledToFill()
+//                                .frame(width: 50, height: 50)
+//                                .clipped()
+//                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                            
+                            AsyncImage(url: URL(string: item.imageURL ?? "")) { phase in
+                                switch phase {
+                                case .empty:
+                                    ProgressView()
+                                        .frame(width: 50, height: 50)
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 50, height: 50)
+                                        .clipped()
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                case .failure:
+                                    Image(systemName: "photo")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 50, height: 50)
+                                        .clipped()
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                        .foregroundColor(.gray)
+                                @unknown default:
+                                    EmptyView()
+                                }
+                            }
+                            
                             
                             // Name + Price in a VStack
                             VStack(alignment: .leading, spacing: 4)

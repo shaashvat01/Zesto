@@ -8,13 +8,6 @@
 import Foundation
 import SwiftUICore
 
-struct MealDBResponse: Codable {
-    let meals: [Meal]?
-}
-
-struct Meal: Codable {
-    let strMealThumb: String
-}
 
 struct RecommendCardHome: Identifiable {
     let id = UUID()

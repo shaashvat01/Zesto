@@ -86,6 +86,84 @@ class HomeViewManager: ObservableObject {
             addPopularCard(dishName: randomDish, imageURL: nil) // Fetches from API if nil
         }
     }
+    //func to fetch full recipe model
+    func fetchRecipeMealDB(for dishName: String, completion: @escaping (RecipeModel?) -> Void) {
+        let placeholderURL = URL(string: "https://via.placeholder.com/150")!
+        let baseURL = "https://www.themealdb.com/api/json/v1/1/search.php?s="
+
+        guard let encodedDish = dishName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let url = URL(string: "\(baseURL)\(encodedDish)") else {
+            print("❌ Invalid URL for dish: \(dishName)")
+            completion(nil)
+            return
+        }
+
+        print("🌍 Fetching recipe from: \(url)")
+
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("❌ Error fetching data: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+
+            guard let data = data else {
+                print("❌ No data received for recipe request.")
+                completion(nil)
+                return
+            }
+
+            do {
+                let response = try JSONDecoder().decode(MealDBResponse.self, from: data)
+                guard let meal = response.meals?.first else {
+                    completion(nil)
+                    return
+                }
+
+                // Use Mirror to get ingredients and measurements
+                let mirror = Mirror(reflecting: meal)
+                var ingredients: [String] = []
+
+                for i in 1...20 {
+                    let ingredientLabel = "strIngredient\(i)"
+                    let measureLabel = "strMeasure\(i)"
+
+                    let ingredient = mirror.children.first { $0.label == ingredientLabel }?.value as? String
+                    let measure = mirror.children.first { $0.label == measureLabel }?.value as? String
+
+                    if let ingredient = ingredient?.trimmingCharacters(in: .whitespacesAndNewlines),
+                       !ingredient.isEmpty,
+                       ingredient.lowercased() != "null" {
+                        let cleanMeasure = measure?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                        ingredients.append("\(cleanMeasure) \(ingredient)".trimmingCharacters(in: .whitespaces))
+                    }
+                }
+
+                let tags = meal.strTags?.components(separatedBy: ",") ?? []
+                let instructions = meal.strInstructions
+                    .components(separatedBy: .newlines)
+                    .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+                let imageURL = URL(string: meal.strMealThumb) ?? placeholderURL
+
+                let recipe = RecipeModel(
+                    name: meal.strMeal,
+                    tags: tags,
+                    ingredients: ingredients,
+                    instructions: instructions,
+                    imageURL: imageURL
+                )
+
+                DispatchQueue.main.async {
+                    completion(recipe)
+                }
+
+            } catch {
+                print("❌ Failed to decode JSON: \(error)")
+                completion(nil)
+            }
+        }.resume()
+    }
+
     
     // image URL fetch for MealDB service [Currently only returns URL BUT CAN RETURN ENTIRE RECIPIE OBJECT]
     func fetchImageMealDB(for dishName: String, completion: @escaping (String?) -> Void) {
@@ -178,13 +256,24 @@ class HomeViewManager: ObservableObject {
             self.recommendCards.append(RecommendCardHome(mealTime: mealTime, dishName: dishName, imageURL: imageURL))
         }
         else{
-            fetchImageMealDB(for: dishName) { imageUrl in
-                    DispatchQueue.main.async {
-                        self.objectWillChange.send()
-                        self.recommendCards.append(RecommendCardHome(mealTime: mealTime, dishName: dishName, imageURL: imageUrl ?? ""))
-                        
-                    }
+            fetchRecipeMealDB(for: dishName) { recipe in
+                guard let recipe = recipe else {
+                    print("❌ Failed to fetch recipe for \(dishName)")
+                    return
                 }
+
+                DispatchQueue.main.async {
+                    self.objectWillChange.send()
+                    self.recommendCards.append(
+                        RecommendCardHome(
+                            mealTime: mealTime,
+                            dishName: dishName,
+                            imageURL: recipe.imageURL.absoluteString,
+                            RecipeModel: recipe
+                        )
+                    )
+                }
+            }
         }
         
     }
@@ -199,12 +288,24 @@ class HomeViewManager: ObservableObject {
             self.popularCards.append(PopularDishesCardHome(dishName: dishName, imageURL: imageURL))
         }
         else{
-            fetchImageMealDB(for: dishName) { imageUrl in
-                    DispatchQueue.main.async {
-                        self.objectWillChange.send()
-                        self.popularCards.append(PopularDishesCardHome(dishName: dishName, imageURL: imageUrl ?? ""))
-                    }
+            fetchRecipeMealDB(for: dishName) { recipe in
+                guard let recipe = recipe else {
+                    print("❌ Failed to fetch recipe for \(dishName)")
+                    return
                 }
+
+                DispatchQueue.main.async {
+                    self.objectWillChange.send()
+                    self.popularCards.append(
+                        PopularDishesCardHome(
+                            dishName: dishName,
+                            imageURL: recipe.imageURL.absoluteString,
+                            RecipeModel: recipe
+                        )
+                    )
+                }
+            }
+            
         }
     }
     

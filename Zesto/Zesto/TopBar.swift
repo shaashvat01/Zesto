@@ -8,34 +8,51 @@
 import SwiftUI
 
 struct TopBar: View {
+    @Binding var topID: Int
+    @EnvironmentObject var appState: AppState
     var body: some View {
-        VStack{
-            ZStack{
-                Rectangle()
-                    .fill(Color.white)
-                    .frame(width: 500, height: 92)
-                    .shadow(radius: 2)
-                
-                
-                Button {
+        if(!appState.hideTopBar){
+            VStack{
+                ZStack{
+                    Rectangle()
+                        .fill(Color.white)
+                        .frame(height: 92)
+                        .frame(maxWidth: .infinity)
+                        .shadow(radius: 2)
                     
-                } label: {
-                    Image(systemName: "line.3.horizontal")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(.black)
+                    HStack{
+                        switch topID {
+                            case 0: //home id
+                            Spacer()
+                                Button {
+                                    
+                                } label: {
+                                    Image(systemName: "line.3.horizontal")
+                                        .resizable()
+                                        .frame(width: 30, height: 30)
+                                        .foregroundColor(.black)
+                                }
+                                .padding(.top, 40) //follow padding palcement for proper align
+                                .padding(.horizontal, 20)
+                            case 1: //scan id
+                                Text("Profile")
+                            default:
+                                Text("")
+                        }
+                    }
+   
                 }
-                .offset(x: 160, y: 20)
-
-                
+                .edgesIgnoringSafeArea(.all)
+                //.ignoresSafeArea(.all)
             }
-            .ignoresSafeArea(.all)
         }
+        
         
     }
     
 }
 
 #Preview {
-    TopBar()
+    TopBar(topID: .constant(0))
+        .environmentObject(AppState())
 }
