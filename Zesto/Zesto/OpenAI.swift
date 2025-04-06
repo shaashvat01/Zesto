@@ -27,7 +27,7 @@ class OpenAI
 {
     static let shared = OpenAI()
     
-    private let apiKey = "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"
+    private let apiKey = ""
     private let apiURL = "https://api.openai.com/v1/chat/completions"
     
     func processImage(_ text: String, completion: @escaping (String?) -> Void)
@@ -62,6 +62,12 @@ class OpenAI
 
                     Only include food or kitchen-related grocery items.
                     Exclude all non-food or non-cooking items such as clothing, electronics, tools, or household goods.
+                    
+                    Some receipt items are weight-based and include a weight and a unit price, followed by a total price. Their format is generally:
+                    ITEM NAME WEIGHT lb @ UNIT_PRICE/lb TOTAL_PRICE
+                    For these lines, treat everything before the weight as the item name, default the quantity to 1, and take the final number as the total price.
+                    Apply this rule to all weight-based items.
+
 
                     Strictly return **only** a JSON array. Do not add explanations or other text.
                     """
