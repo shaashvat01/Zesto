@@ -87,7 +87,8 @@ struct InventoryView: View {
                 // Main list
                 List {
                     ForEach(filteredItems) { item in
-                        HStack(alignment: .center, spacing: 16) {
+                        HStack(alignment: .center, spacing: 16)
+                        {
                             // Thumbnail image (placeholder)
                             Image("Apple")
                                 .resizable()
@@ -97,7 +98,8 @@ struct InventoryView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                             
                             // Name + Price in a VStack
-                            VStack(alignment: .leading, spacing: 4) {
+                            VStack(alignment: .leading, spacing: 4)
+                            {
                                 Text(item.name)
                                     .font(.headline)
                                 Text(String(format: "Price: $%.2f", item.price))
@@ -108,7 +110,8 @@ struct InventoryView: View {
                             Spacer()
                             
                             // Quantity stepper-like control
-                            HStack(spacing: 2) {
+                            HStack(spacing: 2)
+                            {
                                 Button
                                 {
                                     // Decrement quantity if above 0
@@ -159,20 +162,28 @@ struct InventoryView: View {
                             }
                         }
                         .padding(.vertical, 8)
-                        .swipeActions {
+                        .swipeActions
+                        {
                             // Delete action
-                            Button(role: .destructive) {
-                                if let context = item.modelContext {
+                            Button(role: .destructive)
+                            {
+                                if let context = item.modelContext
+                                {
                                     viewModel.removeItem(item, context: context)
                                 }
-                            } label: {
+                            }
+                            label:
+                            {
                                 Text("Delete")
                             }
                             
                             // Edit action
-                            Button {
+                            Button
+                            {
                                 editing = item
-                            } label: {
+                            }
+                            label:
+                            {
                                 Text("Edit")
                             }
                             .tint(.blue)
