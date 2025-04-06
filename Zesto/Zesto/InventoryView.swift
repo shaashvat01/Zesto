@@ -139,7 +139,7 @@ struct InventoryView: View {
                                 
                                 Text("\(item.quantity)")
                                     .font(.body)
-                                    .frame(minWidth: 20)
+                                    .frame(minWidth: 25)
                                 
                                 Button
                                 {
