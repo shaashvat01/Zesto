@@ -76,19 +76,30 @@ struct HomePage: View {
                                                     .frame(width: 175, height: 50)
                                                     .offset(y: 75)
                                                 
-                                                Text(card.mealTime)
-                                                    .foregroundColor(.white)
-                                                    .font(.headline)
-                                                    .fontWeight(.bold)
-                                                    .multilineTextAlignment(.center)
-                                                    .offset(y: 65)
+                                                VStack{
+                                                    Spacer()
+                                                    Text(card.mealTime)
+                                                        .foregroundColor(.white)
+                                                        .font(.headline)
+                                                        .fontWeight(.bold)
+                                                        .multilineTextAlignment(.center)
+                                                        //.offset(y: 65)
+                                                    
+                                                    Text(card.dishName)
+                                                        .foregroundColor(.white)
+                                                        .font(.headline)
+                                                        .fontWeight(.bold)
+                                                        .multilineTextAlignment(.center)
+                                                        //.offset(y: 85)
+                                                        
+                                                }
                                                 
-                                                Text(card.dishName)
-                                                    .foregroundColor(.white)
-                                                    .font(.headline)
-                                                    .fontWeight(.bold)
-                                                    .multilineTextAlignment(.center)
-                                                    .offset(y: 85)
+                                                .frame(width: 175)
+                                                
+                                                
+                                                
+                                                
+                                                
                                                 
                                             }
                                             
@@ -147,25 +158,35 @@ struct HomePage: View {
                                             
                                             if let card = homeManager.getPopularCard(index: index-1){
                                                 
-                                                
-                                                AsyncImage(url: URL(string: card.imageURL ?? "")) { phase in
-                                                    if let image = phase.image {
-                                                        image
-                                                            .resizable()
-                                                            .scaledToFill()
-                                                            .frame(width: 175, height: 200)
-                                                            .clipped()
-                                                            .cornerRadius(10)
-                                                    } else if phase.error != nil {
-                                                        Image(systemName: "photo")
-                                                            .resizable()
-                                                            .scaledToFit()
-                                                            .frame(width: 50, height: 50)
-                                                            .foregroundColor(.gray)
-                                                    } else {
-                                                        ProgressView()
+                                                if let recipe = card.RecipeModel {
+                                                    NavigationLink(destination: RecipieView(recipie: recipe)){
+                                                        
+                                                        AsyncImage(url: URL(string: card.imageURL ?? "")) { phase in
+                                                            switch phase {
+                                                            case .empty:
+                                                                ProgressView()
+                                                                    .frame(width: 175, height: 200)
+                                                            case .success(let image):
+                                                                image
+                                                                    .resizable()
+                                                                    .scaledToFill()
+                                                                    .frame(width: 175, height: 200)
+                                                                    .clipped()
+                                                                    .cornerRadius(10)
+                                                            case .failure:
+                                                                Image(systemName: "photo")
+                                                                    .resizable()
+                                                                    .scaledToFit()
+                                                                    .frame(width: 50, height: 50)
+                                                                    .foregroundColor(.gray)
+                                                            @unknown default:
+                                                                EmptyView()
+                                                            }
+                                                        }
+                                                        
                                                     }
                                                 }
+                                            
                                                 
                                                 RoundedRectangle(cornerRadius: 10)
                                                     .fill(
@@ -184,6 +205,7 @@ struct HomePage: View {
                                                     .fontWeight(.bold)
                                                     .multilineTextAlignment(.center)
                                                     .offset(y: 85)
+                                                    .frame(width: 175, height: 50)
                                             }
                                             
                                             

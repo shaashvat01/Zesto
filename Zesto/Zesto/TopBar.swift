@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct TopBar: View {
-    @Binding var topID: Int
     @EnvironmentObject var appState: AppState
     var body: some View {
         if(!appState.hideTopBar){
@@ -21,7 +20,7 @@ struct TopBar: View {
                         .shadow(radius: 2)
                     
                     HStack{
-                        switch topID {
+                        switch appState.topID {
                             case 0: //home id
                             Spacer()
                                 Button {
@@ -53,6 +52,6 @@ struct TopBar: View {
 }
 
 #Preview {
-    TopBar(topID: .constant(0))
+    TopBar()
         .environmentObject(AppState())
 }

@@ -8,79 +8,88 @@
 import SwiftUI
 
 struct BottomBar: View {
-    @Binding var menuID: Int
+    @EnvironmentObject var appState: AppState
     var body: some View {
-        VStack{
-            ZStack{
-                Rectangle()
-                    .fill(Color.green.opacity(0.85))
-                    .frame(width: 500, height: 75)
-                
-                Circle()
-                    .fill(Color.white)
-                    .shadow(radius: 10)
-                    .frame(width: 50, height: 50)
+        if(!appState.hideBottomBar){
+            VStack{
+                ZStack{
+                    Rectangle()
+                        .fill(Color.green.opacity(0.85))
+                        .frame(width: 500, height: 75)
+                    
+                    Circle()
+                        .fill(Color.white)
+                        .shadow(radius: 10)
+                        .frame(width: 50, height: 50)
+                        .offset(y: -40)
+                    
+                    Button {
+                            appState.topID = 0
+                        
+                    } label: {
+                        Image(systemName: "house")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.black)
+                    }
                     .offset(y: -40)
-                
-                Button {
-                    menuID = 0
-                } label: {
-                    Image(systemName: "house")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(.black)
+                    
+                    
+                    
+                    HStack{
+                        Spacer()
+                        
+                        Button {
+                            appState.topID = 1
+                        } label: {
+                            Image(systemName: "document.viewfinder")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .foregroundColor(.black)
+                        }
+                        
+                        Spacer()
+                        
+                        Button {
+                            appState.topID = 2
+                        } label: {
+                            Image(systemName: "pencil.and.list.clipboard")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .foregroundColor(.black)
+                        }
+                        Spacer()
+                        Button {
+                            appState.topID = 3
+                        } label: {
+                            Image(systemName: "ellipsis.message")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .foregroundColor(.black)
+                        }
+                        Spacer()
+                        Button {
+                            appState.topID = 4
+                        } label: {
+                            Image(systemName: "person.3")
+                                .resizable()
+                                .frame(width: 35, height: 30)
+                                .foregroundColor(.black)
+                        }
+                        Spacer()
+                    }
+                    .padding(.horizontal, 20)
+                    
+                    
+                    
+                    
                 }
-                .offset(y: -40)
-                
-                HStack{
-                    Spacer()
-                    
-                    Button {
-                        menuID = 1
-                    } label: {
-                        Image(systemName: "document.viewfinder")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.black)
-                    }
-                    
-                    Spacer()
-                    
-                    Button {
-                        menuID = 2
-                    } label: {
-                        Image(systemName: "pencil.and.list.clipboard")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.black)
-                    }
-                    Spacer()
-                    Button {
-                        menuID = 3
-                    } label: {
-                        Image(systemName: "ellipsis.message")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(.black)
-                    }
-                    Spacer()
-                    Button {
-                        menuID = 4
-                    } label: {
-                        Image(systemName: "person.3")
-                            .resizable()
-                            .frame(width: 35, height: 30)
-                            .foregroundColor(.black)
-                    }
-                    Spacer()
-                }
-                .padding(.horizontal, 20)
-                
                 
             }
-            
+            .edgesIgnoringSafeArea(.bottom)
+            .ignoresSafeArea(.all)
         }
-        .ignoresSafeArea(.all)
+        
         
         
     }
@@ -88,5 +97,6 @@ struct BottomBar: View {
 }
 
 #Preview {
-    BottomBar(menuID: .constant(0))
+    BottomBar()
+        .environmentObject(AppState())
 }

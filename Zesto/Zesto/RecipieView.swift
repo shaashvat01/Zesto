@@ -9,13 +9,15 @@ import SwiftUI
 
 struct RecipieView: View {
     let recipie: RecipeModel
+    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var appState: AppState
     var body: some View {
         ScrollView {
             GeometryReader { geometry in
                 let offset = geometry.frame(in: .global).minY
                 let height = max(400 - offset, 200) // Min height as it scrolls up
-
+                
+                
                 ZStack(alignment: .bottomLeading) {
                     AsyncImage(url: recipie.imageURL) { phase in
                         switch phase {
@@ -38,17 +40,48 @@ struct RecipieView: View {
                             EmptyView()
                         }
                     }
-
-                    // Title over the image
-                    Text(recipie.name.uppercased())
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .shadow(radius: 10)
-                        .padding()
-                        .background(Color.black.opacity(0.3))
-                        .cornerRadius(10)
-                        .padding([.leading, .bottom], 16)
+                    VStack{
+                        HStack{
+                            Button(action: {
+                                    // ✨ Your custom action here
+                                    print("Back button tapped!")
+                                    presentationMode.wrappedValue.dismiss()
+                                    appState.hideTopBar = false
+                                    appState.hideBottomBar = false
+                                }) {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "arrow.left.circle.fill")
+                                            .resizable()
+                                            .frame(width: 24, height: 24)
+                                            .foregroundColor(.orange)
+//                                        Text("Go Back")
+//                                            .font(.headline)
+//                                            .foregroundColor(.orange)
+                                    }
+                                    .padding(.top, 30)
+                                    .padding(.horizontal, 20)
+                                    
+                                }
+                            
+                            Spacer()
+                        }
+                        
+                        
+                        Spacer()
+                        // Title over the image
+                        Text(recipie.name.uppercased())
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .shadow(radius: 10)
+                            .padding()
+                            .background(Color.black.opacity(0.3))
+                            .cornerRadius(10)
+                            .padding([.leading, .bottom], 16)
+                    }
+                    
+                    
+                    
                 }
                 .frame(height: height)
             }
@@ -122,21 +155,25 @@ struct RecipieView: View {
             .padding(.top, -20) // Pull content closer to image
             
         }
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
         .ignoresSafeArea(edges: .top)
         .onAppear {
             appState.hideTopBar = true
+            appState.hideBottomBar = true
         }
     }
 }
 
 
-//#Preview {
-//    @State var sampleRecipe = RecipeModel(
-//        name: "Spicy Arrabiata Penne",
-//        ingredients: ["1 pound penne rigate", "1/4 cup olive oil", "3 cloves garlic"],
-//        instructions: ["Boil pasta", "Make sauce", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve"],
-//        imageURL: URL(string: "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")!
-//    )
-//    
-//    return RecipieView(recipie: $sampleRecipe)
-//}
+#Preview {
+    let sampleRecipe = RecipeModel(
+        name: "Spicy Arrabiata Penne",
+        ingredients: ["1 pound penne rigate", "1/4 cup olive oil", "3 cloves garlic"],
+        instructions: ["Boil pasta", "Make sauce", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve"],
+        imageURL: URL(string: "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")!
+    )
+    
+    return RecipieView(recipie: sampleRecipe)
+        .environmentObject(AppState())
+}
