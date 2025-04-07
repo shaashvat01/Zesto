@@ -52,14 +52,14 @@ struct RecipieView: View {
                                     HStack(spacing: 6) {
                                         Image(systemName: "arrow.left.circle.fill")
                                             .resizable()
-                                            .frame(width: 24, height: 24)
-                                            .foregroundColor(.orange)
+                                            .frame(width: 30, height: 30)
+                                            .foregroundColor(.white)
 //                                        Text("Go Back")
 //                                            .font(.headline)
 //                                            .foregroundColor(.orange)
                                     }
-                                    .padding(.top, 30)
-                                    .padding(.horizontal, 20)
+                                    .padding(.top, 40)
+                                    .padding(.horizontal, 30)
                                     
                                 }
                             
