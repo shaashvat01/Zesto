@@ -8,8 +8,10 @@
 import SwiftUI
 
 class AppState: ObservableObject {
+    @Published var path = NavigationPath()
     @Published var hideTopBar: Bool = false
-    @Published var topID: Int?
+    @Published var topID: Int = 0
+    @Published var hideBottomBar: Bool = false
 }
 
 @main

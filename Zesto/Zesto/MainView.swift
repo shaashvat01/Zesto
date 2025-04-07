@@ -9,7 +9,6 @@ import SwiftUI
 
 struct MainView: View {
     @EnvironmentObject var appState: AppState
-    @State var menuID: Int = 0
     @StateObject var homeViewModel =  HomeViewManager()
     
     // Our single scanViewModel
@@ -19,26 +18,22 @@ struct MainView: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            TopBar()
+            Spacer()
             
-            
-            if menuID == 0 {
-                TopBar(topID: $menuID)
-                Spacer()
+            if appState.topID == 0 {
                 HomePage(homeManager: homeViewModel)
+                
             }
-            else if menuID == 1 {
-                TopBar(topID: $menuID)
-                Spacer()
+            else if appState.topID == 1 {
                 ScanView(viewModel: scanViewModel, inventoryVM: inventoryViewModel)
             }
-            else if menuID == 2{
-                TopBar(topID: $menuID)
-                Spacer()
+            else if appState.topID == 2{
                 InventoryView(viewModel: inventoryViewModel)
             }
             
             Spacer()
-            BottomBar(menuID: $menuID)
+            BottomBar()
         }
         .ignoresSafeArea(.all)
     }
