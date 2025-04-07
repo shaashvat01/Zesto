@@ -13,10 +13,9 @@ struct ReceiptItem: Codable, Identifiable, Equatable {
     var name: String
     var quantity: Int
     var price: Double
+    var type: String 
 
     private enum CodingKeys: String, CodingKey {
-        case name, quantity, price
+        case name, quantity, price, type
     }
 }
-
-

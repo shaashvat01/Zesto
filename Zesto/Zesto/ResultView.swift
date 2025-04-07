@@ -28,10 +28,8 @@ struct ResultView: View {
         return $items[index]
     }
 
-
     var body: some View {
         ZStack {
-            // Main content
             VStack {
                 HStack {
                     Button("Go Back") {
@@ -54,23 +52,27 @@ struct ResultView: View {
                     }
                 }
                 .padding()
-
+                
                 if isLoading {
                     ProgressView("Processing image...")
                         .padding()
                 } else {
                     if !items.isEmpty {
                         List {
+                            // No "Category" column here
                             HStack {
-                                Text("Item").fontWeight(.semibold)
+                                Text("Item")
+                                    .fontWeight(.semibold)
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                Text("Quantity").fontWeight(.semibold)
+                                Text("Quantity")
+                                    .fontWeight(.semibold)
                                     .frame(maxWidth: .infinity, alignment: .center)
-                                Text("Price").fontWeight(.semibold)
+                                Text("Price")
+                                    .fontWeight(.semibold)
                                     .frame(maxWidth: .infinity, alignment: .trailing)
                             }
                             .padding(.vertical, 4)
-
+                            
                             ForEach(items) { item in
                                 HStack {
                                     Text(item.name)
@@ -97,13 +99,12 @@ struct ResultView: View {
                     }
                 }
             }
-            .blur(radius: isAddingToInventory ? 10 : 0)  // Optional blur behind overlay
-
+            .blur(radius: isAddingToInventory ? 10 : 0)
             
             if isAddingToInventory {
                 VStack(spacing: 12) {
-                    LottieView(animationName: "inventoryLottie") // file name without `.json`
-                        .frame(width: 50, height: 50) // Adjust size here
+                    LottieView(animationName: "inventoryLottie")
+                        .frame(width: 50, height: 50)
                         .scaleEffect(0.2)
                         .padding(.bottom, 60)
                     
@@ -122,6 +123,5 @@ struct ResultView: View {
         .sheet(item: $selectedItem) { item in
             EditReceiptView(item: binding(for: item))
         }
-
     }
 }

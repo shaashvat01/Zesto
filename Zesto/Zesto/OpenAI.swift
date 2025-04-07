@@ -27,7 +27,7 @@ class OpenAI
 {
     static let shared = OpenAI()
     
-    private let apiKey = ""
+    private let apiKey = "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"
     private let apiURL = "https://api.openai.com/v1/chat/completions"
     
     func processImage(_ text: String, completion: @escaping (String?) -> Void)
@@ -55,13 +55,17 @@ class OpenAI
                     "content": """
                     You are a grocery receipt parser.
 
-                    Your job is to extract a list of grocery items from raw receipt text and return them as a JSON array. Each object must include exactly three fields:
+                    Your job is to extract a list of grocery items from raw receipt text and return them as a JSON array. Each object must include exactly four fields:
                     - 'name': full name of the item (expand any abbreviations or codes)
                     - 'quantity': number of units purchased (use 1 if not explicitly mentioned)
                     - 'price': the total price for that item (not per unit)
+                    - 'type': the product category. **You must pick exactly one from the following list**:
+                      [ "Fruit", "Vegetable", "Dairy", "Meat", "Seafood", "Condiment", "Beverage", "Snack", "Grain", "Frozen", "Bakery", "Misc" ]
+                    
+                    If an item clearly doesn't match any category, use "Misc".
 
                     Only include food or kitchen-related grocery items.
-                    Exclude all non-food or non-cooking items such as clothing, electronics, tools, or household goods.
+                    Exclude all non-food or non-cooking items such as clothing, cleaning, electronics, tools, or household goods.
                     
                     Some receipt items are weight-based and include a weight and a unit price, followed by a total price. Their format is generally:
                     ITEM NAME WEIGHT lb @ UNIT_PRICE/lb TOTAL_PRICE

@@ -32,13 +32,13 @@ struct EditReceiptView: View {
 }
 
 
-// sample view
-struct EditReceiptiew_Previews: PreviewProvider {
-    @State static var sampleItem = ReceiptItem(name: "Sample Item", quantity: 2, price: 3.99)
-    
-    static var previews: some View {
-        NavigationView {
-            EditReceiptView(item: $sampleItem)
-        }
-    }
-}
+//// sample view
+//struct EditReceiptiew_Previews: PreviewProvider {
+//    @State static var sampleItem = ReceiptItem(name: "Sample Item", quantity: 2, price: 3.99)
+//    
+//    static var previews: some View {
+//        NavigationView {
+//            EditReceiptView(item: $sampleItem)
+//        }
+//    }
+//}

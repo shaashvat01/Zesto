@@ -10,17 +10,17 @@ import Foundation
 
 @Model
 class InventoryItem {
-    // SwiftData model class
-    // SwiftData automatically generates an ID behind the scenes
     var name: String
     var quantity: Int
     var price: Double
+    var type: String 
     var imageURL: String?
     
-    init(name: String, quantity: Int, price: Double, imageURL: String? = nil) {
+    init(name: String, quantity: Int, price: Double, type: String, imageURL: String? = nil) {
         self.name = name
         self.quantity = quantity
         self.price = price
+        self.type = type
         self.imageURL = imageURL
     }
 }
