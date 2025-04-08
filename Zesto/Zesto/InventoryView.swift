@@ -12,6 +12,7 @@ struct InventoryView: View {
     @ObservedObject var viewModel: InventoryViewModel
     // SwiftData fetched items.
     @Query var allItems: [InventoryItem]
+    @EnvironmentObject var appState: AppState
     
     // For editing.
     @State private var editing: InventoryItem? = nil
@@ -202,11 +203,13 @@ struct InventoryView: View {
                 .scrollContentBackground(.hidden)
                 .background(Color.white)
             }
-            .navigationTitle("My Inventory")
-            .navigationBarTitleDisplayMode(.inline)
             .sheet(item: $editing) { item in
                 EditInventoryView(item: item)
             }
+        }
+        .navigationBarHidden(true)
+        .onAppear {
+            appState.hideTopBar = false 
         }
     }
 }

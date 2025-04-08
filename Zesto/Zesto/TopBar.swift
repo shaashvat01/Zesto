@@ -17,7 +17,7 @@ struct TopBar: View {
                         .fill(Color.white)
                         .frame(height: 92)
                         .frame(maxWidth: .infinity)
-                        .shadow(radius: 2)
+                        //.shadow(radius: 2)
                     
                     HStack{
                         switch appState.topID {
@@ -35,6 +35,19 @@ struct TopBar: View {
                                 .padding(.horizontal, 20)
                             case 1: //scan id
                                 Text("Profile")
+                            
+                        case 2: // Inventory view customization
+                            HStack {
+                                Text("Inventory")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.black)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.top, 40)
+                            
+                            
                             default:
                                 Text("")
                         }
