@@ -18,87 +18,73 @@ struct ShoppingListView: View {
         {
             VStack
             {
-                HStack
+                List
                 {
-                    Button(action: { dismiss() })
-                    {
-                        HStack
-                        {
-                            Image(systemName: "chevron.left")
-                            Text("Back")
-                        }
-                    }
-                    Spacer()
-                    Text("Shopping List")
-                        .font(.headline)
-                        .bold()
-                    Spacer()
-                    Spacer().frame(width: 60)
-                }
-                .padding()
-                .background(Color(uiColor: .systemGray6))
-                
-                // Checklist.
-                List {
                     ForEach(shoppingItems) { item in
-                        HStack {
-                            
-                            // Checkbox button.
-                            Button(action: {
+                        HStack (spacing: 12)
+                        {
+                            Button(action:
+                            {
                                 item.isChecked.toggle()
-                                do {
+                                do
+                                {
                                     try context.save()
-                                } catch {
+                                }
+                                catch
+                                {
                                     print("Error saving checkbox state: \(error)")
                                 }
-                            }) {
+                            })
+                            {
                                 Image(systemName: item.isChecked ? "checkmark.square.fill" : "square")
                             }
                             .buttonStyle(PlainButtonStyle())
                             
-                            // Display the image (if any) on the left.
-                            if let urlStr = item.imageURL, let url = URL(string: urlStr) {
+                            // image display
+                            if let urlStr = item.imageURL, let url = URL(string: urlStr)
+                            {
                                 AsyncImage(url: url) { phase in
-                                    switch phase {
-                                    case .empty:
-                                        ProgressView()
-                                            .frame(width: 40, height: 40)
-                                    case .success(let image):
-                                        image
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 40, height: 40)
-                                            .clipped()
-                                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                                    case .failure:
-                                        Image(systemName: "photo")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 40, height: 40)
-                                            .foregroundColor(.gray)
-                                    @unknown default:
-                                        EmptyView()
+                                    switch phase
+                                    {
+                                        case .empty:
+                                            ProgressView()
+                                                .frame(width: 40, height: 40)
+                                        case .success(let image):
+                                            image
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 40, height: 40)
+                                                .clipped()
+                                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                                        case .failure:
+                                            Image(systemName: "photo")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 40, height: 40)
+                                                .foregroundColor(.gray)
+                                        @unknown default:
+                                            EmptyView()
                                     }
                                 }
-                            } else {
+                            }
+                            else
+                            {
                                 Image(systemName: "photo")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 40, height: 40)
-                                    .foregroundColor(.gray)
                             }
                             
-                            
-                            // Name and quantity.
-                            VStack(alignment: .leading) {
+                            VStack(alignment: .leading)
+                            {
                                 Text(item.name)
                                     .font(.headline)
+                                
                                 Text("Quantity: \(item.quantity)")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                             }
                             Spacer()
-                            // Price display.
                             Text(String(format: "$%.2f", item.price))
                         }
                         .swipeActions {
@@ -115,27 +101,45 @@ struct ShoppingListView: View {
                         }
                     }
                 }
-                .listStyle(PlainListStyle())
-                
-                // Clear List Button.
-                Button(action: clearShoppingList) {
-                    Text("Clear List")
-                        .foregroundColor(.red)
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar
+                {
+                    ToolbarItem(placement: .principal)
+                    {
+                        Text("Shopping List")
+                            .font(.system(size: 25, weight: .bold))
+                    }
+                    
+                    ToolbarItem(placement: .navigationBarTrailing)
+                    {
+                        Button(action: clearShoppingList)
+                        {
+                            Text("Clear List")
+                                .foregroundColor(.red)
+                        }
+                    }
                 }
-                .padding()
+
             }
-            .navigationBarHidden(true)
+            
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
     
-    private func clearShoppingList() {
-        for item in shoppingItems {
+    private func clearShoppingList()
+    {
+        for item in shoppingItems
+        {
             context.delete(item)
         }
-        do {
+        do
+        {
             try context.save()
-        } catch {
+        }
+        catch
+        {
             print("Error clearing shopping list: \(error)")
         }
     }
