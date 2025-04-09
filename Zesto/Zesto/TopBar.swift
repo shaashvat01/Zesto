@@ -50,7 +50,7 @@ struct TopBar: View {
                                 Button(action: {
                                     showShoppingList = true
                                 }) {
-                                    Image(systemName: "list.bullet")
+                                    Image(systemName: "cart")
                                         .resizable()
                                         .frame(width: 24, height: 24)
                                         .foregroundColor(.black)

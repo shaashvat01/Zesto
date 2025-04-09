@@ -101,11 +101,29 @@ struct ShoppingListView: View {
                         }
                     }
                 }
-                .listStyle(.plain)
+                .listStyle(.insetGrouped)
                 .scrollContentBackground(.hidden)
+                .background(Color.white)
+                //.padding(.top, 0)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar
                 {
+                    
+                    ToolbarItem(placement: .navigationBarLeading)
+                    {
+                        Button(action:
+                        {
+                            dismiss()
+                        })
+                        {
+                            HStack
+                            {
+                                Image(systemName: "chevron.left")
+                                Text("Back")
+                            }
+                        }
+                    }
+                    
                     ToolbarItem(placement: .principal)
                     {
                         Text("Shopping List")
