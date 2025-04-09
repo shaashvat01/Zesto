@@ -18,9 +18,10 @@ class AppState: ObservableObject {
 struct ZestoApp: App {
     @StateObject var appState = AppState()
     var body: some Scene {
-        WindowGroup {
+        WindowGroup
+        {
             MainView()
-                .modelContainer(for: [InventoryItem.self])
+                .modelContainer(for: [InventoryItem.self, ShoppingListItem.self])
                 .environmentObject(appState)
         }
     }
