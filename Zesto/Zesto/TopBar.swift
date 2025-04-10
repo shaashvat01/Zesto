@@ -9,49 +9,47 @@ import SwiftUI
 
 struct TopBar: View {
     @EnvironmentObject var appState: AppState
+    @Binding var showMenu: Bool
+    
     var body: some View {
-        if(!appState.hideTopBar){
-            VStack{
-                ZStack{
+        if !appState.hideTopBar {
+            VStack {
+                ZStack {
                     Rectangle()
                         .fill(Color.white)
                         .frame(height: 92)
                         .frame(maxWidth: .infinity)
                         .shadow(radius: 2)
                     
-                    HStack{
+                    HStack {
                         switch appState.topID {
-                            case 0: //home id
+                        case 0: // Home
                             Spacer()
-                                Button {
-                                    
-                                } label: {
-                                    Image(systemName: "line.3.horizontal")
-                                        .resizable()
-                                        .frame(width: 30, height: 30)
-                                        .foregroundColor(.black)
+                            Button {
+                                withAnimation {
+                                    showMenu.toggle()
                                 }
-                                .padding(.top, 40) //follow padding palcement for proper align
-                                .padding(.horizontal, 20)
-                            case 1: //scan id
-                                Text("Profile")
-                            default:
-                                Text("")
+                            } label: {
+                                Image(systemName: "line.3.horizontal")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(.black)
+                            }
+                            .padding(.top, 40)
+                            .padding(.horizontal, 20)
+                        case 1:
+                            Text("Profile")
+                        default:
+                            Text("")
                         }
                     }
-   
                 }
-                .edgesIgnoringSafeArea(.all)
-                //.ignoresSafeArea(.all)
             }
         }
-        
-        
     }
-    
 }
 
 #Preview {
-    TopBar()
+    TopBar(showMenu: .constant(true))
         .environmentObject(AppState())
 }
