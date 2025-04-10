@@ -28,86 +28,7 @@ struct HomePage: View {
                                 .padding(.leading)
                             
                             ScrollView(.horizontal, showsIndicators: false) {  // Horizontal scrolling for HStack
-                                HStack(spacing: 15) {
-                                    ForEach(1...4, id: \.self) { index in
-                                        ZStack{
-                                            
-                                            if let card = homeManager.getRecommendCard(index: index-1) {
-                                                if let recipe = card.RecipeModel {
-                                                    NavigationLink(destination: RecipieView(recipie: recipe)){
-                                                        
-                                                        AsyncImage(url: URL(string: card.imageURL ?? "")) { phase in
-                                                            switch phase {
-                                                            case .empty:
-                                                                ProgressView()
-                                                                    .frame(width: 175, height: 200)
-                                                            case .success(let image):
-                                                                image
-                                                                    .resizable()
-                                                                    .scaledToFill()
-                                                                    .frame(width: 175, height: 200)
-                                                                    .clipped()
-                                                                    .cornerRadius(10)
-                                                            case .failure:
-                                                                Image(systemName: "photo")
-                                                                    .resizable()
-                                                                    .scaledToFit()
-                                                                    .frame(width: 50, height: 50)
-                                                                    .foregroundColor(.gray)
-                                                            @unknown default:
-                                                                EmptyView()
-                                                            }
-                                                        }
-                                                        
-                                                    }
-                                                }
-                                                
-                                                
-                                                
-                                                
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(
-                                                        LinearGradient(
-                                                            gradient: Gradient(colors: [Color.black.opacity(1), Color.clear]),
-                                                            startPoint: .bottom,
-                                                            endPoint: .top
-                                                        )
-                                                    )
-                                                    .frame(width: 175, height: 50)
-                                                    .offset(y: 75)
-                                                
-                                                VStack{
-                                                    Spacer()
-                                                    Text(card.mealTime)
-                                                        .foregroundColor(.white)
-                                                        .font(.headline)
-                                                        .fontWeight(.bold)
-                                                        .multilineTextAlignment(.center)
-                                                        //.offset(y: 65)
-                                                    
-                                                    Text(card.dishName)
-                                                        .foregroundColor(.white)
-                                                        .font(.headline)
-                                                        .fontWeight(.bold)
-                                                        .multilineTextAlignment(.center)
-                                                        //.offset(y: 85)
-                                                        
-                                                }
-                                                
-                                                .frame(width: 175)
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                            }
-                                            
-                                            
-                                        }
-                                        
-                                    }
-                                }
+                                RecommendedCards(homeManager: homeManager)
                             }
                             
                             Text("AI Insights")
@@ -149,71 +70,9 @@ struct HomePage: View {
                                 .padding(.leading)
                             
                             ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 15) {
-                                    ForEach(1...4, id: \.self) { index in
-                                        ZStack{
-                                            RoundedRectangle(cornerRadius: 20)
-                                                .fill(Color.black.opacity(0.1))
-                                                .frame(width: 175, height: 200)
-                                            
-                                            if let card = homeManager.getPopularCard(index: index-1){
-                                                
-                                                if let recipe = card.RecipeModel {
-                                                    NavigationLink(destination: RecipieView(recipie: recipe)){
-                                                        
-                                                        AsyncImage(url: URL(string: card.imageURL ?? "")) { phase in
-                                                            switch phase {
-                                                            case .empty:
-                                                                ProgressView()
-                                                                    .frame(width: 175, height: 200)
-                                                            case .success(let image):
-                                                                image
-                                                                    .resizable()
-                                                                    .scaledToFill()
-                                                                    .frame(width: 175, height: 200)
-                                                                    .clipped()
-                                                                    .cornerRadius(10)
-                                                            case .failure:
-                                                                Image(systemName: "photo")
-                                                                    .resizable()
-                                                                    .scaledToFit()
-                                                                    .frame(width: 50, height: 50)
-                                                                    .foregroundColor(.gray)
-                                                            @unknown default:
-                                                                EmptyView()
-                                                            }
-                                                        }
-                                                        
-                                                    }
-                                                }
-                                            
-                                                
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(
-                                                        LinearGradient(
-                                                            gradient: Gradient(colors: [Color.black.opacity(1), Color.clear]),
-                                                            startPoint: .bottom,
-                                                            endPoint: .top
-                                                        )
-                                                    )
-                                                    .frame(width: 175, height: 50)
-                                                    .offset(y: 75)
-                                                
-                                                Text(card.dishName)
-                                                    .foregroundColor(.white)
-                                                    .font(.headline)
-                                                    .fontWeight(.bold)
-                                                    .multilineTextAlignment(.center)
-                                                    .offset(y: 85)
-                                                    .frame(width: 175, height: 50)
-                                            }
-                                            
-                                            
-                                        }
-                                        
-                                    }
-                                }
+                                PopularCards(homeManager: homeManager)
                             }
+                            
                         }
                         .padding()
                         .frame(width: geometry.size.width)
@@ -233,10 +92,185 @@ struct HomePage: View {
             }
         
     }
-    
         
-    }
+}
 
+struct RecommendedCards: View {
+    @ObservedObject var homeManager: HomeViewManager
+    var body: some View {
+        HStack(spacing: 15) {
+            ForEach(1...4, id: \.self) { index in
+                ZStack{
+                    
+                    if let card = homeManager.getRecommendCard(index: index-1) {
+                        if let recipe = card.RecipeModel {
+                            NavigationLink(destination: RecipieView(recipie: recipe)){
+                                
+                                if let cachedImage = card.cachedImage{
+                                    cachedImage
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 175, height: 200)
+                                        .clipped()
+                                        .cornerRadius(10)
+                                }
+                                else{
+                                    AsyncImage(url: URL(string: card.imageURL ?? "")) { phase in
+                                        switch phase {
+                                        case .empty:
+                                            ProgressView()
+                                                .frame(width: 175, height: 200)
+                                        case .success(let image):
+                                            image
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 175, height: 200)
+                                                .clipped()
+                                                .cornerRadius(10)
+                                        case .failure:
+                                            Image(systemName: "photo")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 50, height: 50)
+                                                .foregroundColor(.gray)
+                                        @unknown default:
+                                            EmptyView()
+                                        }
+                                    }
+                                }
+                                
+                                
+                                
+                            }
+                        }
+                        
+                        
+                        
+                        
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [Color.black.opacity(1), Color.clear]),
+                                    startPoint: .bottom,
+                                    endPoint: .top
+                                )
+                            )
+                            .frame(width: 175, height: 50)
+                            .offset(y: 75)
+                        
+                        VStack{
+                            Spacer()
+                            Text(card.mealTime)
+                                .foregroundColor(.white)
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.center)
+                                //.offset(y: 65)
+                            
+                            Text(card.dishName)
+                                .foregroundColor(.white)
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.center)
+                                //.offset(y: 85)
+                                
+                        }
+                        
+                        .frame(width: 175)
+                    }
+
+                }
+            }
+        }
+    }
+}
+
+struct PopularCards: View {
+    @ObservedObject var homeManager: HomeViewManager
+    var body: some View {
+        HStack(spacing: 15) {
+            ForEach(1...4, id: \.self) { index in
+                ZStack{
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(Color.black.opacity(0.1))
+                        .frame(width: 175, height: 200)
+                    
+                    if let card = homeManager.getPopularCard(index: index-1){
+                        
+                        if let recipe = card.RecipeModel {
+                            NavigationLink(destination: RecipieView(recipie: recipe)){
+                                
+                                if let cachedImage = card.cachedImage{
+                                    cachedImage
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 175, height: 200)
+                                        .clipped()
+                                        .cornerRadius(10)
+                                }
+                                else{
+                                    AsyncImage(url: URL(string: card.imageURL ?? "")) { phase in
+                                        switch phase {
+                                        case .empty:
+                                            ProgressView()
+                                                .frame(width: 175, height: 200)
+                                        case .success(let image):
+                                            image
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 175, height: 200)
+                                                .clipped()
+                                                .cornerRadius(10)
+                                            
+                                        case .failure:
+                                            Image(systemName: "photo")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .frame(width: 50, height: 50)
+                                                .foregroundColor(.gray)
+                                        @unknown default:
+                                            EmptyView()
+                                        }
+                                    }
+
+                                }
+                                
+                                
+                            }
+                        }
+                    
+                        
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [Color.black.opacity(1), Color.clear]),
+                                    startPoint: .bottom,
+                                    endPoint: .top
+                                )
+                            )
+                            .frame(width: 175, height: 50)
+                            .offset(y: 75)
+                        
+                        VStack{
+                            Spacer()
+                            
+                            Text(card.dishName)
+                                .foregroundColor(.white)
+                                .font(.headline)
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.center)
+                        }
+                        .frame(width: 175)
+                        
+                    }
+                    
+                    
+                }
+                
+            }
+        }
+    }
+}
 
 #Preview {
     HomePage(homeManager: HomeViewManager())

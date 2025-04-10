@@ -63,10 +63,10 @@ class HomeViewManager: ObservableObject {
         for index in 1...4 {
             let randomMealTime = mealTimes[index-1]
             let randomDish = dishNames.randomElement() ?? "Dish"
-
+            
             addRecommendCard(mealTime: randomMealTime, dishName: randomDish, imageURL: nil)
         }
-
+        
         // Generate 4 random AI insights
         let insightMessages = [
             "Try reducing sugar for better health!",
@@ -78,59 +78,93 @@ class HomeViewManager: ObservableObject {
             let randomMessage = insightMessages.randomElement() ?? "Eat healthy!"
             addInsightCard(message: randomMessage)
         }
-
+        
         // Generate 4 random popular dishes with image fetching
         for _ in 1...4 {
             let randomDish = dishNames.randomElement() ?? "Dish"
-
+            
             addPopularCard(dishName: randomDish, imageURL: nil) // Fetches from API if nil
         }
     }
+    
+    //fetch image for a given URL
+    func fetchImageFromURL(urlString: String, completion: @escaping (Image?) -> Void) {
+        guard let url = URL(string: urlString) else {
+            print("❌ Invalid URL")
+            completion(nil)
+            return
+        }
+        
+        // Asynchronously fetch the data from the URL
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            // Handle any error or invalid data
+            if let error = error {
+                print("❌ Error fetching image: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            // Check if data is valid
+            guard let data = data, let uiImage = UIImage(data: data) else {
+                print("❌ Invalid image data")
+                completion(nil)
+                return
+            }
+            
+            // Convert the UIImage into a SwiftUI Image and return it in the main thread
+            DispatchQueue.main.async {
+                let image = Image(uiImage: uiImage)
+                completion(image)
+            }
+        }.resume()  // Start the data task
+    }
+    
+    
     //func to fetch full recipe model
     func fetchRecipeMealDB(for dishName: String, completion: @escaping (RecipeModel?) -> Void) {
         let placeholderURL = URL(string: "https://via.placeholder.com/150")!
         let baseURL = "https://www.themealdb.com/api/json/v1/1/search.php?s="
-
+        
         guard let encodedDish = dishName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "\(baseURL)\(encodedDish)") else {
             print("❌ Invalid URL for dish: \(dishName)")
             completion(nil)
             return
         }
-
+        
         print("🌍 Fetching recipe from: \(url)")
-
+        
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 print("❌ Error fetching data: \(error.localizedDescription)")
                 completion(nil)
                 return
             }
-
+            
             guard let data = data else {
                 print("❌ No data received for recipe request.")
                 completion(nil)
                 return
             }
-
+            
             do {
                 let response = try JSONDecoder().decode(MealDBResponse.self, from: data)
                 guard let meal = response.meals?.first else {
                     completion(nil)
                     return
                 }
-
+                
                 // Use Mirror to get ingredients and measurements
                 let mirror = Mirror(reflecting: meal)
                 var ingredients: [String] = []
-
+                
                 for i in 1...20 {
                     let ingredientLabel = "strIngredient\(i)"
                     let measureLabel = "strMeasure\(i)"
-
+                    
                     let ingredient = mirror.children.first { $0.label == ingredientLabel }?.value as? String
                     let measure = mirror.children.first { $0.label == measureLabel }?.value as? String
-
+                    
                     if let ingredient = ingredient?.trimmingCharacters(in: .whitespacesAndNewlines),
                        !ingredient.isEmpty,
                        ingredient.lowercased() != "null" {
@@ -138,13 +172,13 @@ class HomeViewManager: ObservableObject {
                         ingredients.append("\(cleanMeasure) \(ingredient)".trimmingCharacters(in: .whitespaces))
                     }
                 }
-
+                
                 let tags = meal.strTags?.components(separatedBy: ",") ?? []
                 let instructions = meal.strInstructions
                     .components(separatedBy: .newlines)
                     .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
                 let imageURL = URL(string: meal.strMealThumb) ?? placeholderURL
-
+                
                 let recipe = RecipeModel(
                     name: meal.strMeal,
                     tags: tags,
@@ -152,52 +186,52 @@ class HomeViewManager: ObservableObject {
                     instructions: instructions,
                     imageURL: imageURL
                 )
-
+                
                 DispatchQueue.main.async {
                     completion(recipe)
                 }
-
+                
             } catch {
                 print("❌ Failed to decode JSON: \(error)")
                 completion(nil)
             }
         }.resume()
     }
-
+    
     
     // image URL fetch for MealDB service [Currently only returns URL BUT CAN RETURN ENTIRE RECIPIE OBJECT]
     func fetchImageMealDB(for dishName: String, completion: @escaping (String?) -> Void) {
         let placeholderURL = "https://via.placeholder.com/150"
         let baseURL = "https://www.themealdb.com/api/json/v1/1/search.php?s="
-
+        
         guard let encodedDish = dishName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "\(baseURL)\(encodedDish)") else {
             print("❌ Invalid URL for dish: \(dishName)")
             completion(placeholderURL)
             return
         }
-
+        
         print("🌍 Fetching image from: \(url)")
-
+        
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 print("❌ Error fetching image: \(error.localizedDescription)")
                 completion(placeholderURL)
                 return
             }
-
+            
             guard let data = data else {
                 print("❌ No data received for image request.")
                 completion(placeholderURL)
                 return
             }
-
+            
             do {
                 let response = try JSONDecoder().decode(MealDBResponse.self, from: data)
                 let imageUrl = response.meals?.first?.strMealThumb ?? placeholderURL
-
+                
                 print("✅ Successfully fetched image URL: \(imageUrl)")
-
+                
                 DispatchQueue.main.async {
                     completion(imageUrl)
                 }
@@ -211,29 +245,29 @@ class HomeViewManager: ObservableObject {
     // WebScraper URL fetch service
     func fetchImage(for dishName: String, completion: @escaping (String?) -> Void) {
         let placeholderURL = "https://via.placeholder.com/150"
-
+        
         guard let encodedDish = dishName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "\(baseURL)\(encodedDish)") else {
             print("❌ Invalid URL for dish: \(dishName)")
             completion(placeholderURL)
             return
         }
-
+        
         print("🌍 Fetching image from: \(url)")
-
+        
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 print("❌ Error fetching image: \(error.localizedDescription)")
                 completion(placeholderURL)
                 return
             }
-
+            
             guard let data = data else {
                 print("❌ No data received for image request.")
                 completion(placeholderURL)
                 return
             }
-
+            
             do {
                 let imageResponse = try JSONDecoder().decode(ImageResponse.self, from: data)
                 let imageUrl = imageResponse.image_url
@@ -261,17 +295,25 @@ class HomeViewManager: ObservableObject {
                     print("❌ Failed to fetch recipe for \(dishName)")
                     return
                 }
-
+                
                 DispatchQueue.main.async {
                     self.objectWillChange.send()
-                    self.recommendCards.append(
-                        RecommendCardHome(
-                            mealTime: mealTime,
-                            dishName: dishName,
-                            imageURL: recipe.imageURL.absoluteString,
-                            RecipeModel: recipe
-                        )
-                    )
+                    var card = RecommendCardHome(mealTime: mealTime,dishName: dishName,
+                                                     imageURL: recipe.imageURL.absoluteString,
+                                                     RecipeModel: recipe)
+                    
+                    self.fetchImageFromURL(urlString: card.imageURL ?? "") { image in
+                        if let image = image {
+                            card.cachedImage = image
+                            DispatchQueue.main.async {
+                                self.objectWillChange.send()
+                                self.recommendCards.append(card)
+                            }
+                        } else {
+                            print("❌ Failed to fetch image for \(dishName)")
+                        }
+                        
+                    }
                 }
             }
         }
@@ -293,58 +335,73 @@ class HomeViewManager: ObservableObject {
                     print("❌ Failed to fetch recipe for \(dishName)")
                     return
                 }
-
+                
                 DispatchQueue.main.async {
                     self.objectWillChange.send()
-                    self.popularCards.append(
-                        PopularDishesCardHome(
-                            dishName: dishName,
-                            imageURL: recipe.imageURL.absoluteString,
-                            RecipeModel: recipe
-                        )
-                    )
+                    var card = PopularDishesCardHome(dishName: dishName,
+                                                     imageURL: recipe.imageURL.absoluteString,
+                                                     RecipeModel: recipe)
+                    self.fetchImageFromURL(urlString: card.imageURL ?? "") { image in
+                        if let image = image {
+                            card.cachedImage = image
+                            DispatchQueue.main.async {
+                                self.objectWillChange.send()
+                                self.popularCards.append(card)
+                            }
+                        } else {
+                            print("❌ Failed to fetch image for \(dishName)")
+                        }
+                        
+                    }
                 }
+                
             }
-            
         }
     }
-    
-    func getRecommendCard(index: Int) -> RecommendCardHome?{
-        if index >= self.recommendCards.count {
-            return nil
+        
+        func getRecommendCard(index: Int) -> RecommendCardHome?{
+            if index >= self.recommendCards.count {
+                return nil
+            }
+            return self.recommendCards[index]
         }
-        return self.recommendCards[index]
-    }
-    
-    func getInsightCard(index: Int) -> InsightsCardHome?{
-        if index >= self.insightCards.count {
-            return nil
+        
+        func getInsightCard(index: Int) -> InsightsCardHome?{
+            if index >= self.insightCards.count {
+                return nil
+            }
+            return self.insightCards[index]
         }
-        return self.insightCards[index]
-    }
-    
-    func getPopularCard(index: Int) -> PopularDishesCardHome?{
-        if index >= self.popularCards.count {
-            return nil
+        
+        func getPopularCard(index: Int) -> PopularDishesCardHome?{
+            if index >= self.popularCards.count {
+                return nil
+            }
+            return self.popularCards[index]
         }
-        return self.popularCards[index]
+        
+        func getRecommendCards() -> [RecommendCardHome]{
+            return self.recommendCards
+        }
+        
+        func getInsightCards() -> [InsightsCardHome]{
+            return self.insightCards
+        }
+        
+        func getPopularCards() -> [PopularDishesCardHome]{
+            return self.popularCards
+        }
+        
+        func clearAllCards(){
+            self.recommendCards.removeAll()
+            self.insightCards.removeAll()
+            self.popularCards.removeAll()
+        }
+        
+        
+        
+        
+        
+        
     }
-    
-    func getRecommendCards() -> [RecommendCardHome]{
-        return self.recommendCards
-    }
-    
-    func getInsightCards() -> [InsightsCardHome]{
-        return self.insightCards
-    }
-    
-    func getPopularCards() -> [PopularDishesCardHome]{
-        return self.popularCards
-    }
-    
-    func clearAllCards(){
-        self.recommendCards.removeAll()
-        self.insightCards.removeAll()
-        self.popularCards.removeAll()
-    }
-}
+
