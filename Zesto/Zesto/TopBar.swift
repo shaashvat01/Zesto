@@ -12,6 +12,7 @@ struct TopBar: View {
 
     @Binding var showMenu: Bool
     
+    @EnvironmentObject var userSession: UserSessionManager
 
     @State private var showShoppingList = false
 
@@ -28,21 +29,38 @@ struct TopBar: View {
                     HStack {
                         switch appState.topID {
                         case 0: // Home
-                            Spacer()
-                            Button {
-
-                                // Add action if needed.
-                            } label: {
-                                Image(systemName: "line.3.horizontal")
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
+                            HStack
+                            {
+                                Text("Welcome")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
                                     .foregroundColor(.black)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                Button
+                                {
+                                    userSession.logout()
+                                } label: {
+                                    Image(systemName: "line.3.horizontal")
+                                        .resizable()
+                                        .frame(width: 30, height: 30)
+                                        .foregroundColor(.black)
+                                }
                             }
                             .padding(.top, 40)
                             .padding(.horizontal, 20)
                             
                         case 1: // Scan view
-                            Text("Profile")
+                            HStack
+                            {
+                                Text("Scanner")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.black)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.top, 40)
                             
                         case 2: // Inventory view
                             HStack {
