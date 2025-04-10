@@ -85,22 +85,18 @@ class InventoryViewModel: ObservableObject {
         // Merge duplicate items from the same scan.
         let unifiedItems = unifyItems(receiptItems)
         
-        // Get existing inventory items.
+        // Fetch existing inventory items.
         let fetchDesc = FetchDescriptor<InventoryItem>()
         let existingItems: [InventoryItem] = (try? context.fetch(fetchDesc)) ?? []
-        
-        // Build a dictionary of existing items using basic normalization as key.
         var invDict = [String: InventoryItem]()
         for item in existingItems {
             let key = basicNormalize(item.name) + "::" + basicNormalize(item.type)
             invDict[key] = item
         }
         
-        // Process each item from the new scan.
         for rItem in unifiedItems {
             let key = basicNormalize(rItem.name) + "::" + basicNormalize(rItem.type)
             if let existing = invDict[key] {
-                // Check with fuzzy matching.
                 if isLikelySame(normalizeText(existing.name), normalizeText(rItem.name)) &&
                     isLikelySame(normalizeText(existing.type), normalizeText(rItem.type)) {
                     existing.quantity += rItem.quantity
@@ -145,6 +141,26 @@ class InventoryViewModel: ObservableObject {
             try context.save()
         } catch {
             print("Error deleting: \(error)")
+        }
+    }
+    
+    // Move an InventoryItem to the Shopping List.
+    func moveItemToShoppingList(_ item: InventoryItem, context: ModelContext) {
+        print("Moving item '\(item.name)' to shopping list")  // Debug print.
+        let shoppingItem = ShoppingListItem(
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+            type: item.type,
+            imageURL: item.imageURL
+        )
+        context.insert(shoppingItem)
+        context.delete(item)
+        do {
+            try context.save()
+            print("Item moved successfully.")
+        } catch {
+            print("Error moving item to shopping list: \(error)")
         }
     }
 }

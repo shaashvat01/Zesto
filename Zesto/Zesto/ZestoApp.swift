@@ -37,6 +37,7 @@ struct ZestoApp: App {
 
                 case .complete:
                     MainView()
+                        .modelContainer(for: [InventoryItem.self, ShoppingListItem.self])
                         .environmentObject(appState)
                         .environmentObject(userSession)
 
