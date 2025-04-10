@@ -15,6 +15,7 @@ struct RecommendCardHome: Identifiable {
     let dishName: String
     var imageURL: String?
     var RecipeModel: RecipeModel?
+    var cachedImage: Image?
 }
 
 struct InsightsCardHome: Identifiable {
@@ -28,6 +29,7 @@ struct PopularDishesCardHome: Identifiable {
     let dishName: String
     var imageURL: String?
     var RecipeModel: RecipeModel?
+    var cachedImage: Image?
 }
 
 

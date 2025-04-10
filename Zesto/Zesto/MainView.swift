@@ -15,29 +15,51 @@ struct MainView: View {
     @StateObject var scanViewModel = ScanViewModel()
     
     @StateObject var inventoryViewModel = InventoryViewModel()
+    @State private var showMenu: Bool = false
     
     var body: some View {
-        VStack(spacing: 0) {
-            TopBar()
-            Spacer()
-            
-            if appState.topID == 0 {
-                HomePage(homeManager: homeViewModel)
+        ZStack{
+
+                VStack(spacing: 0) {
+                    TopBar(showMenu: $showMenu)
+                    Spacer()
+                    
+                    if appState.topID == 0 {
+                        ZStack{
+                            HomePage(homeManager: homeViewModel)
+                            if showMenu {
+                                SlideInMenu(showMenu: $showMenu)
+                                    .transition(.move(edge: .trailing))
+                                    .zIndex(1)
+                            }
+                        }
+
+                    }
+                    else if appState.topID == 1 {
+                        ScanView(viewModel: scanViewModel, inventoryVM: inventoryViewModel)
+                    }
+                    else if appState.topID == 2{
+                        InventoryView(viewModel: inventoryViewModel)
+                    }
+                    
+                    Spacer()
+                    BottomBar()
+                    
+                    
+                }
                 
-            }
-            else if appState.topID == 1 {
-                ScanView(viewModel: scanViewModel, inventoryVM: inventoryViewModel)
-            }
-            else if appState.topID == 2{
-                InventoryView(viewModel: inventoryViewModel)
-            }
+
             
-            Spacer()
-            BottomBar()
+
+           
         }
-        .ignoresSafeArea(.all)
+        .animation(.easeInOut, value: showMenu)
+        .edgesIgnoringSafeArea(.all)
+
+        
     }
 }
+
 
 
 

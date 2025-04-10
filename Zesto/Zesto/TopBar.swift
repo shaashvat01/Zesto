@@ -9,7 +9,12 @@ import SwiftUI
 
 struct TopBar: View {
     @EnvironmentObject var appState: AppState
+
+    @Binding var showMenu: Bool
+    
+
     @State private var showShoppingList = false
+
 
     var body: some View {
         if !appState.hideTopBar {
@@ -25,6 +30,7 @@ struct TopBar: View {
                         case 0: // Home
                             Spacer()
                             Button {
+
                                 // Add action if needed.
                             } label: {
                                 Image(systemName: "line.3.horizontal")
@@ -69,11 +75,13 @@ struct TopBar: View {
                             }
                             .padding(.horizontal, 20)
                             .padding(.top, 40)
+                          
                         default:
                             Text("")
                         }
                     }
                 }
+
                 .edgesIgnoringSafeArea(.all)
             }
             // Present the shopping list full screen from TopBar.
@@ -85,6 +93,6 @@ struct TopBar: View {
 }
 
 #Preview {
-    TopBar()
+    TopBar(showMenu: .constant(true))
         .environmentObject(AppState())
 }
