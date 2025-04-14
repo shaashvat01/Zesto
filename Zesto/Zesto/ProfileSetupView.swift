@@ -82,6 +82,7 @@ struct ProfileSetupView:View {
     @State private var showDietSheet = false
     
     @State private var stageNum: Int = 0
+    
 
     @State private var selectedRestrictions: Set<String> = []
 
@@ -241,6 +242,7 @@ struct ProfileSetupView:View {
                         Button(action: {
                             if(stageNum < 2){
                                 stageNum += 1
+
                             }
                         }) {
                             Text("Next")
@@ -273,6 +275,10 @@ struct ProfileSetupView:View {
                                     }
                                 } else {
                                     print("No user is currently signed in.")
+                                }
+                            
+                            DispatchQueue.main.async {
+                                    self.userSession.checkIfSetupIsDone()
                                 }
                             
                         }) {
