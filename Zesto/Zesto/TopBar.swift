@@ -9,13 +9,12 @@ import SwiftUI
 
 struct TopBar: View {
     @EnvironmentObject var appState: AppState
-
     @Binding var showMenu: Bool
     
     @EnvironmentObject var userSession: UserSessionManager
-
+    
     @State private var showShoppingList = false
-
+    @State private var showMapView = false
 
     var body: some View {
         if !appState.hideTopBar {
@@ -29,16 +28,14 @@ struct TopBar: View {
                     HStack {
                         switch appState.topID {
                         case 0: // Home
-                            HStack
-                            {
+                            HStack {
                                 Text("Welcome")
                                     .font(.title2)
                                     .fontWeight(.bold)
                                     .foregroundColor(.black)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                Button
-                                {
+                                Button {
                                     userSession.logout()
                                 } label: {
                                     Image(systemName: "line.3.horizontal")
@@ -51,8 +48,7 @@ struct TopBar: View {
                             .padding(.horizontal, 20)
                             
                         case 1: // Scan view
-                            HStack
-                            {
+                            HStack {
                                 Text("Scanner")
                                     .font(.title2)
                                     .fontWeight(.bold)
@@ -70,7 +66,7 @@ struct TopBar: View {
                                     .foregroundColor(.black)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                // Shopping list icon
+                                // Shopping list icon.
                                 Button(action: {
                                     showShoppingList = true
                                 }) {
@@ -81,9 +77,9 @@ struct TopBar: View {
                                 }
                                 .padding(.trailing, 8)
                                 
-                                // Map icon stub
+                                // Map icon.
                                 Button(action: {
-                                    print("Map icon tapped")
+                                    showMapView = true
                                 }) {
                                     Image(systemName: "map")
                                         .resizable()
@@ -99,12 +95,15 @@ struct TopBar: View {
                         }
                     }
                 }
-
                 .edgesIgnoringSafeArea(.all)
             }
-            // Present the shopping list full screen from TopBar.
+            // Present the shopping list full screen.
             .fullScreenCover(isPresented: $showShoppingList) {
                 ShoppingListView()
+            }
+            // Present the map view full screen.
+            .fullScreenCover(isPresented: $showMapView) {
+                MapView()
             }
         }
     }

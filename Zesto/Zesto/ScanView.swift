@@ -82,7 +82,7 @@ struct ScanView: View {
     }
 }
 
-/// ImagePicker remains the same
+// ImagePicker remains the same
 struct ImagePicker: UIViewControllerRepresentable {
     @Environment(\.presentationMode) private var presentationMode
     var sourceType: UIImagePickerController.SourceType

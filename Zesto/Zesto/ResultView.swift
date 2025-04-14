@@ -118,7 +118,6 @@ struct ResultView: View {
                 .ignoresSafeArea()
             }
         }
-        .navigationTitle("Scan Result")
         .navigationBarBackButtonHidden(true)
         .sheet(item: $selectedItem) { item in
             EditReceiptView(item: binding(for: item))
