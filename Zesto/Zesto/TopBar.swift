@@ -28,14 +28,16 @@ struct TopBar: View {
                     HStack {
                         switch appState.topID {
                         case 0: // Home
-                            HStack {
-                                Text("Welcome")
+                            HStack
+                            {
+                                Text("Welcome \(userSession.userModel?.username ?? "User")")
                                     .font(.title2)
                                     .fontWeight(.bold)
                                     .foregroundColor(.black)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                Button {
+                                Button
+                                {
                                     userSession.logout()
                                 } label: {
                                     Image(systemName: "line.3.horizontal")
@@ -48,7 +50,8 @@ struct TopBar: View {
                             .padding(.horizontal, 20)
                             
                         case 1: // Scan view
-                            HStack {
+                            HStack
+                            {
                                 Text("Scanner")
                                     .font(.title2)
                                     .fontWeight(.bold)
@@ -112,4 +115,5 @@ struct TopBar: View {
 #Preview {
     TopBar(showMenu: .constant(true))
         .environmentObject(AppState())
+        .environmentObject(UserSessionManager())
 }

@@ -58,6 +58,8 @@ class UserSessionManager: ObservableObject {
                     self.userModel = UserModel(
                         id: uid,
                         email: userData["email"] as? String ?? "",
+                        firstName: userData["firstName"] as! String,
+                        lastName: userData["lastName"] as! String,
                         username: userData["username"] as? String ?? "",
                         displayName: userData["displayName"] as? String,
                         dateOfBirth: (userData["dateOfBirth"] as? Timestamp)?.dateValue(),
