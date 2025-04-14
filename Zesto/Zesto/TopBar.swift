@@ -31,7 +31,7 @@ struct TopBar: View {
                         case 0: // Home
                             HStack
                             {
-                                Text("Welcome")
+                                Text("Welcome \(userSession.userModel?.username ?? "User")")
                                     .font(.title2)
                                     .fontWeight(.bold)
                                     .foregroundColor(.black)
@@ -113,4 +113,5 @@ struct TopBar: View {
 #Preview {
     TopBar(showMenu: .constant(true))
         .environmentObject(AppState())
+        .environmentObject(UserSessionManager())
 }
