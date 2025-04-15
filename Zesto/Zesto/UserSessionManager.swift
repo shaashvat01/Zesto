@@ -63,7 +63,8 @@ class UserSessionManager: ObservableObject {
                         username: userData["username"] as? String ?? "",
                         displayName: userData["displayName"] as? String,
                         dateOfBirth: (userData["dateOfBirth"] as? Timestamp)?.dateValue(),
-                        dietaryPreferences: userData["dietaryPreferences"] as? [String] ?? [],
+                        // Changed here to match what ProfileSetupView writes.
+                        dietaryPreferences: userData["dietaryRestrictions"] as? [String] ?? [],
                         createdAt: (userData["createdAt"] as? Timestamp)?.dateValue() ?? Date()
                     )
                 }

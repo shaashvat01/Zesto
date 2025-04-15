@@ -24,6 +24,7 @@ struct ZestoApp: App {
 
     @StateObject var appState = AppState()
     @StateObject var userSession = UserSessionManager()
+    @StateObject var inventoryViewModel = InventoryViewModel()
 
     var body: some Scene {
         WindowGroup {
@@ -34,13 +35,12 @@ struct ZestoApp: App {
                         Color(.systemBackground).ignoresSafeArea()
                         ProgressView("Loading...")
                     }
-
                 case .complete:
                     MainView()
                         .modelContainer(for: [InventoryItem.self, ShoppingListItem.self])
                         .environmentObject(appState)
                         .environmentObject(userSession)
-
+                        .environmentObject(inventoryViewModel)  
                 case .incomplete:
                     ProfileSetupView()
                         .environmentObject(userSession)

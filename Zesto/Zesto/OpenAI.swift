@@ -8,7 +8,7 @@
 import Foundation
 
 // Response structures for OpenAI's Chat Completions API
-struct OpenAIResponse: Decodable
+struct OpenAIChatResponse: Decodable
 {
     let choices: [OpenAIChoice]
 }
@@ -110,7 +110,7 @@ class OpenAI
             
             // 7. Decode the JSON response
             do {
-                let decodedResponse = try JSONDecoder().decode(OpenAIResponse.self, from: data)
+                let decodedResponse = try JSONDecoder().decode(OpenAIChatResponse.self, from: data)
                 let content = decodedResponse.choices.first?.message.content ?? "No structured data found."
                 completion(content)
             } catch {

@@ -81,6 +81,23 @@ func unifyItems(_ items: [ReceiptItem]) -> [ReceiptItem] {
 }
 
 class InventoryViewModel: ObservableObject {
+    // New published property that holds all current inventory items.
+    @Published var allItems: [InventoryItem] = []
+    
+    /// Helper method to refresh the inventory list from the SwiftData context.
+    func fetchAllItems(context: ModelContext) {
+        let fetchDesc = FetchDescriptor<InventoryItem>()
+        if let items: [InventoryItem] = try? context.fetch(fetchDesc) {
+            DispatchQueue.main.async {
+                self.allItems = items
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.allItems = []
+            }
+        }
+    }
+    
     func addToInventory(_ receiptItems: [ReceiptItem], context: ModelContext) {
         // Merge duplicate items from the same scan.
         let unifiedItems = unifyItems(receiptItems)
@@ -111,6 +128,7 @@ class InventoryViewModel: ObservableObject {
                         )
                         context.insert(newItem)
                         invDict[key] = newItem
+                        self.fetchAllItems(context: context)
                     }
                 }
             } else {
@@ -124,12 +142,14 @@ class InventoryViewModel: ObservableObject {
                     )
                     context.insert(newItem)
                     invDict[key] = newItem
+                    self.fetchAllItems(context: context)
                 }
             }
         }
         
         do {
             try context.save()
+            self.fetchAllItems(context: context)
         } catch {
             print("Error saving: \(error)")
         }
@@ -139,6 +159,7 @@ class InventoryViewModel: ObservableObject {
         context.delete(item)
         do {
             try context.save()
+            self.fetchAllItems(context: context)
         } catch {
             print("Error deleting: \(error)")
         }
@@ -159,6 +180,7 @@ class InventoryViewModel: ObservableObject {
         do {
             try context.save()
             print("Item moved successfully.")
+            self.fetchAllItems(context: context)
         } catch {
             print("Error moving item to shopping list: \(error)")
         }
