@@ -62,7 +62,7 @@ class ChatViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    /// Updates (or replaces) the system message with the current context.
+    // Updates (or replaces) the system message with the current context.
     func updateSystemContext() {
         // Build an inventory description that shows each item's name and quantity.
         let items = inventoryViewModel.allItems
@@ -95,7 +95,7 @@ class ChatViewModel: ObservableObject {
         }
     }
     
-    /// Sends the user's message and calls the Chat API Service.
+    // Sends the user's message and calls the Chat API Service.
     func sendMessage() {
         let trimmedText = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedText.isEmpty else { return }
