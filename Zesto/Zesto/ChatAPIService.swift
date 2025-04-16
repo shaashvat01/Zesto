@@ -7,26 +7,34 @@
 
 import Foundation
 
-struct ChatAPIResponse: Decodable {
+struct ChatAPIResponse: Decodable
+{
     let choices: [ChatAPIChoice]
 }
 
-struct ChatAPIChoice: Decodable {
+struct ChatAPIChoice: Decodable
+{
     let message: ChatAPIMessage
 }
 
-struct ChatAPIMessage: Decodable {
+struct ChatAPIMessage: Decodable
+{
     let content: String
 }
 
 class ChatAPIService {
     static let shared = ChatAPIService()
     
-    // Replace with your actual OpenAI API key.
-    private let apiKey = ""
+    private let apiKey: String = {
+        guard let key = Bundle.main.infoDictionary?["API_KEY"] as? String else {
+            fatalError("API_KEY not found in Info.plist")
+        }
+        return key
+    }()
+
     private let apiURL = "https://api.openai.com/v1/chat/completions"
     
-    /// Sends the given conversation messages to the OpenAI Chat API and returns the reply.
+    // Sends the given conversation messages to the OpenAI Chat API and returns the reply.
     func sendMessage(messages: [ChatMessage], completion: @escaping (Result<String, Error>) -> Void) {
         guard let url = URL(string: apiURL) else {
             completion(.failure(NSError(domain:"Invalid URL", code: 0)))

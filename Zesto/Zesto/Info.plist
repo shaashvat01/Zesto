@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>API_KEY</key>
+	<string>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</string>
 	<key>NSCameraReactionEffectGesturesEnabledDefault</key>
 	<false/>
 	<key>NSLocationWhenInUseUsageDescription</key>
