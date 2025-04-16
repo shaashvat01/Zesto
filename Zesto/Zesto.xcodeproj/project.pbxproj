@@ -14,13 +14,11 @@
 		50764E152DA7974D007A17B6 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 50764E142DA7974D007A17B6 /* FirebaseStorage */; };
 		50764E182DA7976E007A17B6 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 50764E172DA7976E007A17B6 /* GoogleSignIn */; };
 		50764E1A2DA7976E007A17B6 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 50764E192DA7976E007A17B6 /* GoogleSignInSwift */; };
-		50A9C6B72DAF952700C3270B /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 50A9C6B62DAF952700C3270B /* .gitignore */; };
 		8164D8882DA0674000BF26FF /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 8164D8872DA0674000BF26FF /* Lottie */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		50824C7D2D7E53E900BA3673 /* Zesto.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zesto.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		50A9C6B62DAF952700C3270B /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -66,7 +64,6 @@
 		50824C742D7E53E900BA3673 = {
 			isa = PBXGroup;
 			children = (
-				50A9C6B62DAF952700C3270B /* .gitignore */,
 				50824C7F2D7E53E900BA3673 /* Zesto */,
 				50824C7E2D7E53E900BA3673 /* Products */,
 			);
@@ -157,7 +154,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50A9C6B72DAF952700C3270B /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
