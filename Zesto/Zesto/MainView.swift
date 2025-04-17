@@ -45,17 +45,15 @@ struct MainView: View {
                     else if appState.topID == 2{
                         InventoryView(viewModel: inventoryViewModel)
                     }
-                } else if appState.topID == 1 {
-                    ScanView(viewModel: scanViewModel, inventoryVM: inventoryViewModel)
-                } else if appState.topID == 2 {
-                    InventoryView(viewModel: inventoryViewModel)
-                }
+               
+                
                 // Chat view for appState.topID == 3:
-                else if appState.topID == 3 {
-                    ChatView(inventoryViewModel: inventoryViewModel,
-                             userSession: userSession,
-                             context: context)
+                    else if appState.topID == 3 {
+                        ChatView(inventoryViewModel: inventoryViewModel,
+                                 userSession: userSession,
+                                 context: context)
                         .environmentObject(appState)
+                    }
                     else if appState.topID == 4{
                         ProfileView()
                     }
