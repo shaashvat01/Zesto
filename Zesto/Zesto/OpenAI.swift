@@ -29,11 +29,8 @@ class OpenAI
     
     private let apiKey: String = {
             guard
-                // 1) Find the file
                 let path = Bundle.main.path(forResource: "secrets", ofType: "plist"),
-                // 2) Load the file’s contents as a dictionary
                 let dict = NSDictionary(contentsOfFile: path) as? [String: Any],
-                // 3) Extract the “API_KEY” value
                 let key = dict["OpenAI_API"] as? String
             else {
                 fatalError("API_KEY not found in Secrets.plist")

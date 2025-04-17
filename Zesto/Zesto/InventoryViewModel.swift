@@ -9,13 +9,13 @@ import SwiftUI
 import SwiftData
 import Foundation
 
-// Simple normalization: lowercase and trim spaces.
-func basicNormalize(_ text: String) -> String {
+func basicNormalize(_ text: String) -> String
+{
     return text.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
 }
 
-// Robust normalization using NSLinguisticTagger.
-func normalizeText(_ text: String) -> String {
+func normalizeText(_ text: String) -> String
+{
     let lower = text.lowercased()
     let noPunct = lower.components(separatedBy: CharacterSet.punctuationCharacters).joined(separator: " ")
     let trimmed = noPunct.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -25,9 +25,12 @@ func normalizeText(_ text: String) -> String {
     var words = [String]()
     let range = NSRange(location: 0, length: trimmed.utf16.count)
     tagger.enumerateTags(in: range, unit: .word, scheme: .lemma, options: [.omitPunctuation, .omitWhitespace]) { tag, tokenRange, _ in
-        if let lemma = tag?.rawValue {
+        if let lemma = tag?.rawValue
+        {
             words.append(lemma)
-        } else {
+        }
+        else
+        {
             let word = (trimmed as NSString).substring(with: tokenRange)
             words.append(word)
         }
@@ -35,7 +38,6 @@ func normalizeText(_ text: String) -> String {
     return words.joined(separator: " ")
 }
 
-// Levenshtein distance.
 func levenshtein(_ a: String, _ b: String) -> Int {
     let aArr = Array(a)
     let bArr = Array(b)
@@ -65,7 +67,6 @@ func isLikelySame(_ a: String, _ b: String, threshold: Double = 85.0) -> Bool {
     return similarityRatio(a, b) >= threshold
 }
 
-// Merge duplicate ReceiptItems in one scan.
 func unifyItems(_ items: [ReceiptItem]) -> [ReceiptItem] {
     var dict = [String: ReceiptItem]()
     for item in items {
@@ -80,44 +81,54 @@ func unifyItems(_ items: [ReceiptItem]) -> [ReceiptItem] {
     return Array(dict.values)
 }
 
-class InventoryViewModel: ObservableObject {
-    // New published property that holds all current inventory items.
+class InventoryViewModel: ObservableObject
+{
     @Published var allItems: [InventoryItem] = []
     
-    /// Helper method to refresh the inventory list from the SwiftData context.
-    func fetchAllItems(context: ModelContext) {
+    func fetchAllItems(context: ModelContext)
+    {
         let fetchDesc = FetchDescriptor<InventoryItem>()
-        if let items: [InventoryItem] = try? context.fetch(fetchDesc) {
-            DispatchQueue.main.async {
+        if let items: [InventoryItem] = try? context.fetch(fetchDesc)
+        {
+            DispatchQueue.main.async
+            {
                 self.allItems = items
             }
-        } else {
-            DispatchQueue.main.async {
+        }
+        else
+        {
+            DispatchQueue.main.async
+            {
                 self.allItems = []
             }
         }
     }
     
-    func addToInventory(_ receiptItems: [ReceiptItem], context: ModelContext) {
-        // Merge duplicate items from the same scan.
+    func addToInventory(_ receiptItems: [ReceiptItem], context: ModelContext)
+    {
         let unifiedItems = unifyItems(receiptItems)
         
-        // Fetch existing inventory items.
         let fetchDesc = FetchDescriptor<InventoryItem>()
         let existingItems: [InventoryItem] = (try? context.fetch(fetchDesc)) ?? []
         var invDict = [String: InventoryItem]()
-        for item in existingItems {
+        for item in existingItems
+        {
             let key = basicNormalize(item.name) + "::" + basicNormalize(item.type)
             invDict[key] = item
         }
         
-        for rItem in unifiedItems {
+        for rItem in unifiedItems
+        {
             let key = basicNormalize(rItem.name) + "::" + basicNormalize(rItem.type)
-            if let existing = invDict[key] {
+            if let existing = invDict[key]
+            {
                 if isLikelySame(normalizeText(existing.name), normalizeText(rItem.name)) &&
-                    isLikelySame(normalizeText(existing.type), normalizeText(rItem.type)) {
+                    isLikelySame(normalizeText(existing.type), normalizeText(rItem.type))
+                {
                     existing.quantity += rItem.quantity
-                } else {
+                }
+                else
+                {
                     fetchImage(for: rItem.name, type: rItem.type) { url in
                         let newItem = InventoryItem(
                             name: rItem.name,
@@ -131,7 +142,9 @@ class InventoryViewModel: ObservableObject {
                         self.fetchAllItems(context: context)
                     }
                 }
-            } else {
+            }
+            else
+            {
                 fetchImage(for: rItem.name, type: rItem.type) { url in
                     let newItem = InventoryItem(
                         name: rItem.name,
@@ -147,27 +160,33 @@ class InventoryViewModel: ObservableObject {
             }
         }
         
-        do {
+        do
+        {
             try context.save()
             self.fetchAllItems(context: context)
-        } catch {
+        }
+        catch
+        {
             print("Error saving: \(error)")
         }
     }
     
-    func removeItem(_ item: InventoryItem, context: ModelContext) {
+    func removeItem(_ item: InventoryItem, context: ModelContext)
+    {
         context.delete(item)
-        do {
+        do
+        {
             try context.save()
             self.fetchAllItems(context: context)
-        } catch {
+        }
+        catch
+        {
             print("Error deleting: \(error)")
         }
     }
     
-    // Move an InventoryItem to the Shopping List.
-    func moveItemToShoppingList(_ item: InventoryItem, context: ModelContext) {
-        print("Moving item '\(item.name)' to shopping list")  // Debug print.
+    func moveItemToShoppingList(_ item: InventoryItem, context: ModelContext)
+    {
         let shoppingItem = ShoppingListItem(
             name: item.name,
             quantity: item.quantity,
@@ -177,11 +196,13 @@ class InventoryViewModel: ObservableObject {
         )
         context.insert(shoppingItem)
         context.delete(item)
-        do {
+        do
+        {
             try context.save()
-            print("Item moved successfully.")
             self.fetchAllItems(context: context)
-        } catch {
+        }
+        catch
+        {
             print("Error moving item to shopping list: \(error)")
         }
     }

@@ -22,18 +22,17 @@ struct ChatAPIMessage: Decodable
     let content: String
 }
 
-class ChatAPIService {
+class ChatAPIService
+{
     static let shared = ChatAPIService()
     
     private let apiKey: String = {
             guard
-                // 1) Find the file
                 let path = Bundle.main.path(forResource: "secrets", ofType: "plist"),
-                // 2) Load the file’s contents as a dictionary
                 let dict = NSDictionary(contentsOfFile: path) as? [String: Any],
-                // 3) Extract the “API_KEY” value
                 let key = dict["OpenAI_API"] as? String
-            else {
+            else
+            {
                 fatalError("API_KEY not found in Secrets.plist")
             }
             return key
@@ -41,9 +40,11 @@ class ChatAPIService {
 
     private let apiURL = "https://api.openai.com/v1/chat/completions"
     
-    // Sends the given conversation messages to the OpenAI Chat API and returns the reply.
-    func sendMessage(messages: [ChatMessage], completion: @escaping (Result<String, Error>) -> Void) {
-        guard let url = URL(string: apiURL) else {
+    func sendMessage(messages: [ChatMessage], completion: @escaping (Result<String, Error>) -> Void)
+    {
+        guard let url = URL(string: apiURL)
+        else
+        {
             completion(.failure(NSError(domain:"Invalid URL", code: 0)))
             return
         }
@@ -51,46 +52,54 @@ class ChatAPIService {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         
-        // Set headers
         request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        // Convert the ChatMessage array to the expected dictionary format.
         let messagesToSend = messages.map { ["role": $0.role.rawValue, "content": $0.text] }
         
-        // Build the request body.
         let body: [String: Any] = [
             "model": "gpt-3.5-turbo",
             "messages": messagesToSend,
             "temperature": 0.2
         ]
         
-        do {
+        do
+        {
             let data = try JSONSerialization.data(withJSONObject: body, options: [])
             request.httpBody = data
-        } catch {
+        }
+        catch
+        {
             completion(.failure(error))
             return
         }
         
         // Create the data task for the API call.
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
+            if let error = error
+            {
                 completion(.failure(error))
                 return
             }
-            guard let data = data else {
+            guard let data = data
+            else
+            {
                 completion(.failure(NSError(domain:"No data", code: 0)))
                 return
             }
-            do {
+            do
+            {
                 let decodedResponse = try JSONDecoder().decode(ChatAPIResponse.self, from: data)
                 if let reply = decodedResponse.choices.first?.message.content {
                     completion(.success(reply))
-                } else {
+                }
+                else
+                {
                     completion(.failure(NSError(domain: "No reply", code: 0)))
                 }
-            } catch {
+            }
+            catch
+            {
                 completion(.failure(error))
             }
         }
