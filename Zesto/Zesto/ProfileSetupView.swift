@@ -9,6 +9,9 @@ import SwiftUI
 import Firebase
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
+import PhotosUI
+
 
 let dietaryOptions = [
     "Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free",
@@ -80,6 +83,10 @@ struct ProfileSetupView:View {
     @State private var dateOfBirth: Date = Date()
     @State private var showDatePicker: Bool = false
     @State private var showDietSheet = false
+    
+    @State private var selectedItem: PhotosPickerItem? = nil
+    @State private var profileImage: UIImage? = nil
+
     
     @State private var stageNum: Int = 0
     
@@ -206,11 +213,41 @@ struct ProfileSetupView:View {
                         }
                     }
                     else{
-                        Image(systemName: "person.crop.circle.fill")
-                            .resizable()
-                            .frame(width: 80, height: 80)
-                            .clipShape(Circle())
-                            .foregroundColor(.white)
+                        VStack(spacing: 16) {
+                            if let profileImage = profileImage {
+                                Image(uiImage: profileImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 100, height: 100)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 5)
+                            } else {
+                                Image(systemName: "person.crop.circle.badge.plus")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 100, height: 100)
+                                    .foregroundColor(.gray)
+                            }
+
+                            PhotosPicker(selection: $selectedItem, matching: .images, photoLibrary: .shared()) {
+                                Text("Add Profile Picture")
+                                    .foregroundColor(.black)
+                                    .padding(.horizontal)
+                                    .padding(.vertical, 8)
+                                    .background(Color.white.opacity(0.9))
+                                    .cornerRadius(10)
+                                    .shadow(radius: 2)
+                            }
+                        }
+                        .onChange(of: selectedItem) { newItem in
+                            Task {
+                                if let data = try? await newItem?.loadTransferable(type: Data.self),
+                                   let uiImage = UIImage(data: data) {
+                                    self.profileImage = uiImage
+                                }
+                            }
+                        }
+
                     }
                     
                    
@@ -260,27 +297,69 @@ struct ProfileSetupView:View {
                     }
                     if(stageNum == 2){
                         Button(action: {
+                            guard let userID = Auth.auth().currentUser?.uid else {
+                                print("No user is currently signed in.")
+                                return
+                            }
+                            
                             let db = Firestore.firestore()
-                                if let userID = Auth.auth().currentUser?.uid {
-                                    db.collection("users").document(userID).updateData([
-                                        "dateOfBirth": Timestamp(date: dateOfBirth),
-                                        "dietaryRestrictions": Array(selectedRestrictions),
-                                        "setupComplete": true
-                                    ]) { error in
+                            let storageRef = Storage.storage().reference().child("profileImages/\(userID).jpg")
+                            
+                            // Assuming you added this state earlier:
+                            // @State private var profileImage: UIImage? = nil
+                            
+                            if let imageData = profileImage?.jpegData(compressionQuality: 0.8) {
+                                storageRef.putData(imageData, metadata: nil) { metadata, error in
+                                    if let error = error {
+                                        print("Error uploading profile image: \(error.localizedDescription)")
+                                        return
+                                    }
+                                    
+                                    storageRef.downloadURL { url, error in
                                         if let error = error {
-                                            print("Error updating setup info: \(error.localizedDescription)")
-                                        } else {
-                                            print("User setup info saved!")
+                                            print("Error fetching download URL: \(error.localizedDescription)")
+                                            return
+                                        }
+                                        
+                                        guard let downloadURL = url else {
+                                            print("Download URL is nil.")
+                                            return
+                                        }
+                                        
+                                        db.collection("users").document(userID).updateData([
+                                            "dateOfBirth": Timestamp(date: dateOfBirth),
+                                            "dietaryRestrictions": Array(selectedRestrictions),
+                                            "profileImageUrl": downloadURL.absoluteString,
+                                            "setupComplete": true
+                                        ]) { error in
+                                            if let error = error {
+                                                print("Error updating setup info: \(error.localizedDescription)")
+                                            } else {
+                                                print("User setup info with image saved!")
+                                                DispatchQueue.main.async {
+                                                    self.userSession.checkIfSetupIsDone()
+                                                }
+                                            }
                                         }
                                     }
-                                } else {
-                                    print("No user is currently signed in.")
                                 }
-                            
-                            DispatchQueue.main.async {
-                                    self.userSession.checkIfSetupIsDone()
+                            } else {
+                                // If no image is selected, save other data without the profile image URL.
+                                db.collection("users").document(userID).updateData([
+                                    "dateOfBirth": Timestamp(date: dateOfBirth),
+                                    "dietaryRestrictions": Array(selectedRestrictions),
+                                    "setupComplete": true
+                                ]) { error in
+                                    if let error = error {
+                                        print("Error updating setup info: \(error.localizedDescription)")
+                                    } else {
+                                        print("User setup info saved without profile image.")
+                                        DispatchQueue.main.async {
+                                            self.userSession.checkIfSetupIsDone()
+                                        }
+                                    }
                                 }
-                            
+                            }
                         }) {
                             Text("Confirm")
                                 .font(.headline)
@@ -295,6 +374,7 @@ struct ProfileSetupView:View {
                         }
                         .shadow(radius: 5)
                     }
+
 
                     
                 

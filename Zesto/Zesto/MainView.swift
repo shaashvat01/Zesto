@@ -22,20 +22,28 @@ struct MainView: View {
     @State private var showMenu: Bool = false
     
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                TopBar(showMenu: $showMenu)
-                Spacer()
-                
-                // Navigation based on appState.topID
-                if appState.topID == 0 {
-                    ZStack {
-                        HomePage(homeManager: homeViewModel)
-                        if showMenu {
-                            SlideInMenu(showMenu: $showMenu)
-                                .transition(.move(edge: .trailing))
-                                .zIndex(1)
+        NavigationView {
+            ZStack{
+                VStack(spacing: 0) {
+                    TopBar(showMenu: $showMenu)
+                    Spacer()
+                    
+                    if appState.topID == 0 {
+                        ZStack{
+                            HomePage(homeManager: homeViewModel)
+                            if showMenu {
+                                SlideInMenu(showMenu: $showMenu)
+                                    .transition(.move(edge: .trailing))
+                                    .zIndex(1)
+                            }
                         }
+                        
+                    }
+                    else if appState.topID == 1 {
+                        ScanView(viewModel: scanViewModel, inventoryVM: inventoryViewModel)
+                    }
+                    else if appState.topID == 2{
+                        InventoryView(viewModel: inventoryViewModel)
                     }
                 } else if appState.topID == 1 {
                     ScanView(viewModel: scanViewModel, inventoryVM: inventoryViewModel)
@@ -48,14 +56,28 @@ struct MainView: View {
                              userSession: userSession,
                              context: context)
                         .environmentObject(appState)
+                    else if appState.topID == 4{
+                        ProfileView()
+                    }
+                    else if appState.topID == 5{
+                        ProfileEditView()
+                    }
+                    
+                    Spacer()
+                    BottomBar()
+                    
+                    
                 }
                 
-                Spacer()
-                BottomBar()
+                
+                
+                
+                
             }
+            .animation(.easeInOut, value: showMenu)
+            .edgesIgnoringSafeArea(.all)
         }
-        .animation(.easeInOut, value: showMenu)
-        .edgesIgnoringSafeArea(.all)
+        
     }
 }
 
@@ -64,4 +86,5 @@ struct MainView: View {
         .environmentObject(AppState())
         .environmentObject(UserSessionManager())
         .environmentObject(InventoryViewModel())
+        .environmentObject(UserRecipeManager())
 }

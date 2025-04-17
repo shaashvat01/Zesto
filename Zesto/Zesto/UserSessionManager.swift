@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
+import FirebaseStorage
 
 enum SetupStatus {
     case unknown
@@ -65,7 +66,13 @@ class UserSessionManager: ObservableObject {
                         dateOfBirth: (userData["dateOfBirth"] as? Timestamp)?.dateValue(),
                         // Changed here to match what ProfileSetupView writes.
                         dietaryPreferences: userData["dietaryRestrictions"] as? [String] ?? [],
-                        createdAt: (userData["createdAt"] as? Timestamp)?.dateValue() ?? Date()
+                        createdAt: (userData["createdAt"] as? Timestamp)?.dateValue() ?? Date(),
+                        profileImageURL: {
+                                if let urlString = userData["profileImageUrl"] as? String {
+                                    return URL(string: urlString)
+                                }
+                                return nil
+                            }()
                     )
                 }
                 
@@ -86,4 +93,58 @@ class UserSessionManager: ObservableObject {
             print("Logout error: \(error.localizedDescription)")
         }
     }
+    
+    func saveProfileChanges(firstName: String, lastName: String, username: String, dietaryPreferences: [String], profileImage: UIImage?, completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let userID = self.userModel?.id else {
+            completion(.failure(NSError(domain: "InvalidUserID", code: 0, userInfo: nil)))
+            return
+        }
+
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(userID)
+
+        if let profileImage = profileImage, let imageData = profileImage.jpegData(compressionQuality: 0.8) {
+            let storageRef = Storage.storage().reference().child("profileImages/\(UUID().uuidString).jpg")
+            storageRef.putData(imageData, metadata: nil) { metadata, error in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+
+                storageRef.downloadURL { url, error in
+                    if let error = error {
+                        completion(.failure(error))
+                        return
+                    }
+
+                    let imageUrl = url?.absoluteString ?? ""
+                    self.updateFirestore(userRef: userRef, firstName: firstName, lastName: lastName, username: username, dietaryPreferences: dietaryPreferences, imageUrl: imageUrl, completion: completion)
+                }
+            }
+        } else {
+            let existingUrl = self.userModel?.profileImageURL?.absoluteString ?? ""
+            self.updateFirestore(userRef: userRef, firstName: firstName, lastName: lastName, username: username, dietaryPreferences: dietaryPreferences, imageUrl: existingUrl, completion: completion)
+        }
+    }
+
+    private func updateFirestore(userRef: DocumentReference, firstName: String, lastName: String, username: String, dietaryPreferences: [String], imageUrl: String, completion: @escaping (Result<Void, Error>) -> Void) {
+
+        let updatedData: [String: Any] = [
+            "firstName": firstName,
+            "lastName": lastName,
+            "username": username,
+            "dietaryRestrictions": dietaryPreferences,
+            "profileImageUrl": imageUrl
+        ]
+
+        userRef.updateData(updatedData) { error in
+            if let error = error {
+                completion(.failure(error))
+            } else {
+                self.checkIfSetupIsDone()  // Refresh local model
+                completion(.success(()))
+            }
+        }
+    }
+
 }

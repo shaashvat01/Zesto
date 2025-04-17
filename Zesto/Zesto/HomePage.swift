@@ -104,7 +104,7 @@ struct RecommendedCards: View {
                     
                     if let card = homeManager.getRecommendCard(index: index-1) {
                         if let recipe = card.RecipeModel {
-                            NavigationLink(destination: RecipieView(recipie: recipe)){
+                            NavigationLink(destination: RecipieView(recipe: recipe)){
                                 
                                 if let cachedImage = card.cachedImage{
                                     cachedImage
@@ -198,7 +198,7 @@ struct PopularCards: View {
                     if let card = homeManager.getPopularCard(index: index-1){
                         
                         if let recipe = card.RecipeModel {
-                            NavigationLink(destination: RecipieView(recipie: recipe)){
+                            NavigationLink(destination: RecipieView(recipe: recipe)){
                                 
                                 if let cachedImage = card.cachedImage{
                                     cachedImage
