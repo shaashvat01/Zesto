@@ -18,8 +18,8 @@ struct MainView: View {
     @State private var showMenu: Bool = false
     
     var body: some View {
-        ZStack{
-
+        NavigationView {
+            ZStack{
                 VStack(spacing: 0) {
                     TopBar(showMenu: $showMenu)
                     Spacer()
@@ -33,13 +33,19 @@ struct MainView: View {
                                     .zIndex(1)
                             }
                         }
-
+                        
                     }
                     else if appState.topID == 1 {
                         ScanView(viewModel: scanViewModel, inventoryVM: inventoryViewModel)
                     }
                     else if appState.topID == 2{
                         InventoryView(viewModel: inventoryViewModel)
+                    }
+                    else if appState.topID == 4{
+                        ProfileView()
+                    }
+                    else if appState.topID == 5{
+                        ProfileEditView()
                     }
                     
                     Spacer()
@@ -48,14 +54,14 @@ struct MainView: View {
                     
                 }
                 
-
-            
-
-           
+                
+                
+                
+                
+            }
+            .animation(.easeInOut, value: showMenu)
+            .edgesIgnoringSafeArea(.all)
         }
-        .animation(.easeInOut, value: showMenu)
-        .edgesIgnoringSafeArea(.all)
-
         
     }
 }
@@ -66,4 +72,6 @@ struct MainView: View {
 #Preview {
     MainView()
         .environmentObject(AppState())
+        .environmentObject(UserSessionManager())
+        .environmentObject(UserRecipeManager())
 }

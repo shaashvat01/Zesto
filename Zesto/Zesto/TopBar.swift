@@ -92,7 +92,50 @@ struct TopBar: View {
                             }
                             .padding(.horizontal, 20)
                             .padding(.top, 40)
-                          
+                        case 4: // Profile view
+                            
+                            ZStack{
+                                HStack{
+                                    Text("Profile")
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.black)
+                                        .frame(maxWidth: .infinity,alignment: .center)
+                                }
+                                HStack{
+                                    Spacer()
+                                    
+                                    Button(action: {
+                                        appState.topID = 5
+                                    }) {
+                                        Image(systemName: "applepencil")
+                                            .resizable()
+                                            .frame(width: 24, height: 24)
+                                            .foregroundColor(.black)
+                                            .padding(8)
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.top, 40)
+                                   
+                        case 5:
+                            HStack{
+                                Button(action: {
+                                    appState.topID = 4
+                                }) {
+                                    Image(systemName: "chevron.left")
+                                        .resizable()
+                                        .frame(width: 24, height: 24)
+                                        .foregroundColor(.black)
+                                        .padding(8)
+                                }
+                                
+                                Spacer()
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.top, 40)
+                            
                         default:
                             Text("")
                         }

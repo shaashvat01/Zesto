@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct RecipieView: View {
-    let recipie: RecipeModel
+    let recipe: RecipeModel
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var appState: AppState
+    @EnvironmentObject var userRecipe: UserRecipeManager
+    
     var body: some View {
         ScrollView {
             GeometryReader { geometry in
@@ -19,7 +21,7 @@ struct RecipieView: View {
                 
                 
                 ZStack(alignment: .bottomLeading) {
-                    AsyncImage(url: recipie.imageURL) { phase in
+                    AsyncImage(url: recipe.imageURL) { phase in
                         switch phase {
                         case .empty:
                             ProgressView()
@@ -69,7 +71,7 @@ struct RecipieView: View {
                         
                         Spacer()
                         // Title over the image
-                        Text(recipie.name.uppercased())
+                        Text(recipe.name.uppercased())
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
@@ -108,14 +110,30 @@ struct RecipieView: View {
 
                 // Buttons
                 HStack(spacing: 16) {
-                    Button(action: {}) {
-                        Image(systemName: "heart")
+                    Button(action: {
+                        if userRecipe.isRecipeLiked(recipe){
+                            userRecipe.removeLike(recipe)
+                        }
+                        else{
+                            userRecipe.addLike(recipe)
+                        }
+                        
+                    }) {
+                        Image(systemName: userRecipe.isRecipeLiked(recipe) ? "heart.fill" : "heart")
                             .resizable()
                             .frame(width: 30, height: 30)
                             .foregroundColor(.red)
                     }
-                    Button(action: {}) {
-                        Image(systemName: "bookmark")
+                    Button(action: {
+                        if userRecipe.isRecipeBookmarked(recipe){
+                            userRecipe.removeBookmark(recipe)
+                        }
+                        else{
+                            userRecipe.addBookmark(recipe)
+                        }
+                        
+                    }) {
+                        Image(systemName: userRecipe.isRecipeBookmarked(recipe) ? "bookmark.fill" : "bookmark")
                             .resizable()
                             .frame(width: 30, height: 30)
                             .foregroundColor(.blue)
@@ -128,7 +146,7 @@ struct RecipieView: View {
                         .font(.title2)
                         .fontWeight(.semibold)
                     
-                    ForEach(recipie.ingredients, id: \.self) { item in
+                    ForEach(recipe.ingredients, id: \.self) { item in
                         Text("• \(item)")
                     }
                 }
@@ -139,8 +157,8 @@ struct RecipieView: View {
                         .font(.title2)
                         .fontWeight(.semibold)
 
-                    ForEach(recipie.instructions.indices, id: \.self) { index in
-                        Text("\(index + 1). \(recipie.instructions[index])")
+                    ForEach(recipe.instructions.indices, id: \.self) { index in
+                        Text("\(index + 1). \(recipe.instructions[index])")
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
@@ -166,14 +184,14 @@ struct RecipieView: View {
 }
 
 
-#Preview {
-    let sampleRecipe = RecipeModel(
-        name: "Spicy Arrabiata Penne",
-        ingredients: ["1 pound penne rigate", "1/4 cup olive oil", "3 cloves garlic"],
-        instructions: ["Boil pasta", "Make sauce", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve"],
-        imageURL: URL(string: "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")!
-    )
-    
-    return RecipieView(recipie: sampleRecipe)
-        .environmentObject(AppState())
-}
+//#Preview {
+//    let sampleRecipe = RecipeModel(
+//        name: "Spicy Arrabiata Penne",
+//        ingredients: ["1 pound penne rigate", "1/4 cup olive oil", "3 cloves garlic"],
+//        instructions: ["Boil pasta", "Make sauce", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve", "Mix and serve"],
+//        imageURL: URL(string: "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg")!
+//    )
+//    
+//    return RecipieView(recipe: sampleRecipe)
+//        .environmentObject(AppState())
+//}

@@ -24,6 +24,7 @@ struct ZestoApp: App {
 
     @StateObject var appState = AppState()
     @StateObject var userSession = UserSessionManager()
+    @StateObject var userRecipe = UserRecipeManager()
 
     var body: some Scene {
         WindowGroup {
@@ -40,6 +41,7 @@ struct ZestoApp: App {
                         .modelContainer(for: [InventoryItem.self, ShoppingListItem.self])
                         .environmentObject(appState)
                         .environmentObject(userSession)
+                        .environmentObject(userRecipe)
 
                 case .incomplete:
                     ProfileSetupView()

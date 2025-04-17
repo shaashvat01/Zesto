@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import SwiftUICore
 
-struct UserModel: Identifiable, Codable {
+struct UserModel: Identifiable {
     var id: String
     var email: String
     var firstName: String
@@ -17,4 +18,6 @@ struct UserModel: Identifiable, Codable {
     var dateOfBirth: Date?
     var dietaryPreferences: [String]
     var createdAt: Date
+    var profileImageURL: URL?
+    var profileImage: Image?
 }
