@@ -9,14 +9,16 @@ import SwiftData
 import Foundation
 
 @Model
-class InventoryItem {
+class InventoryItem
+{
     var name: String
     var quantity: Int
     var price: Double
     var type: String 
     var imageURL: String?
     
-    init(name: String, quantity: Int, price: Double, type: String, imageURL: String? = nil) {
+    init(name: String, quantity: Int, price: Double, type: String, imageURL: String? = nil)
+    {
         self.name = name
         self.quantity = quantity
         self.price = price
