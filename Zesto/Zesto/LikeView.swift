@@ -7,17 +7,19 @@
 
 import SwiftUI
 
-
-
 struct LikeView: View {
     @EnvironmentObject var userRecipe: UserRecipeManager
+    @EnvironmentObject var appState: AppState
+    @State private var selectedRecipe: RecipeModel?  // Added state to control navigation
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 12) {
                     ForEach(userRecipe.likes, id: \.id) { recipe in
-                        NavigationLink(destination: RecipieView(recipe: recipe)) {
+                        Button {
+                            selectedRecipe = recipe  // Set selected recipe on tap
+                        } label: {
                             HStack(spacing: 12) {
                                 AsyncImage(url: recipe.imageURL) { phase in
                                     if let image = phase.image {
@@ -53,7 +55,15 @@ struct LikeView: View {
                 }
                 .padding()
             }
+            .navigationBarBackButtonHidden(true)
+            .navigationBarHidden(true)
             .navigationTitle("Liked Recipes")
+            .navigationDestination(item: $selectedRecipe) { recipe in
+                RecipieView(recipe: recipe)
+            }
+        }
+        .onAppear {
+            appState.topID = 7
         }
     }
 }
@@ -62,3 +72,4 @@ struct LikeView: View {
     LikeView()
         .environmentObject(UserRecipeManager())
 }
+

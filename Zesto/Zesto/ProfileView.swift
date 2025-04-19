@@ -14,6 +14,8 @@ struct ProfileView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var userSession: UserSessionManager
     
+    @State var pageNumber = 0
+    
     var body: some View {
         VStack(spacing: 20) {
             HStack(alignment: .center, spacing: 16) {
@@ -92,92 +94,74 @@ struct ProfileView: View {
             
            // Options List
             VStack(spacing: 16) {
-                    NavigationLink(destination: BookmarkView()){
-                        HStack {
-                            Text("Your Bookmarks")
-                                .foregroundColor(.black)
-                                .font(.headline)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.gray)
-                        }
-                        .padding()
-                        .background(Color.white.opacity(0.9))
-                        .cornerRadius(14)
-                        .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
+                Button(action: {
+                    appState.topID = 6
+                }) {
+                    HStack {
+                        Text("Your Bookmarks")
+                            .foregroundColor(.black)
+                            .font(.headline)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.gray)
                     }
+                    .padding()
+                    .background(Color.white.opacity(0.9))
+                    .cornerRadius(14)
+                    .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
+                }
+                
+                Button(action: {
+                    appState.topID = 7
+                }) {
+                    HStack {
+                        Text("Your Likes")
+                            .foregroundColor(.black)
+                            .font(.headline)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.gray)
+                    }
+                    .padding()
+                    .background(Color.white.opacity(0.9))
+                    .cornerRadius(14)
+                    .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
+                }
+
+                
                     
                     
-                    NavigationLink(destination: LikeView()){
-                        HStack {
-                            Text("Your Likes")
-                                .foregroundColor(.black)
-                                .font(.headline)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.gray)
-                        }
-                        .padding()
-                        .background(Color.white.opacity(0.9))
-                        .cornerRadius(14)
-                        .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
-                    }
                     
-                    NavigationLink(destination: EmptyView()){
-                        HStack {
-                            Text("Settings")
-                                .foregroundColor(.black)
-                                .font(.headline)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.gray)
-                        }
-                        .padding()
-                        .background(Color.white.opacity(0.9))
-                        .cornerRadius(14)
-                        .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
+//                    HStack {
+//                        Text("Your Likes")
+//                            .foregroundColor(.black)
+//                            .font(.headline)
+//                        Spacer()
+//                        Image(systemName: "chevron.right")
+//                            .foregroundColor(.gray)
+//                    }
+//                    .padding()
+//                    .background(Color.white.opacity(0.9))
+//                    .cornerRadius(14)
+//                    .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
+                    
+                    HStack {
+                        Text("Settings")
+                            .foregroundColor(.black)
+                            .font(.headline)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.gray)
                     }
+                    .padding()
+                    .background(Color.white.opacity(0.9))
+                    .cornerRadius(14)
+                    .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
                 
                 
                 
             }
-            
-            // Options List
-//            VStack(spacing: 16) {
-//                ForEach(["Your Bookmarks", "Your Likes", "Settings"], id: \.self) { option in
-//                    NavigationLink(destination: {
-//                        switch option {
-//                        case "Your Bookmarks":
-//                            BookmarkView()
-//                        case "Your Likes":
-//                            LikeView()
-//                        case "Settings":
-//                            EmptyView()
-//                        default:
-//                            EmptyView()
-//                        }
-//                    }) {
-//                        HStack {
-//                            Text(option)
-//                                .foregroundColor(.black)
-//                                .font(.headline)
-//                            Spacer()
-//                            Image(systemName: "chevron.right")
-//                                .foregroundColor(.gray)
-//                        }
-//                        .padding()
-//                        .background(Color.white.opacity(0.9))
-//                        .cornerRadius(14)
-//                        .shadow(color: .gray.opacity(0.3), radius: 4, x: 0, y: 2)
-//                    }
-//                    .buttonStyle(PlainButtonStyle())  // Removes default blue highlight
-//                }
-//            }
-
-            
-            
-            
-            
+         
             // Log Out Button
             Button(action: {
                 userSession.logout()
@@ -195,6 +179,7 @@ struct ProfileView: View {
             
             Spacer()
         }
+        .navigationBarBackButtonHidden(true)
         .padding(20)
         .cornerRadius(25)
         .onAppear {
@@ -213,7 +198,7 @@ struct ProfileView: View {
 #Preview {
     ProfileView()
         .environmentObject(UserSessionManager())
-        .environmentObject(UserRecipeManager())
+        .environmentObject(AppState())
 }
 
 

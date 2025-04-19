@@ -60,6 +60,12 @@ struct MainView: View {
                     else if appState.topID == 5{
                         ProfileEditView()
                     }
+                    else if appState.topID == 6 {
+                        BookmarkView()
+                    }
+                    else if appState.topID == 7 {
+                        LikeView()
+                    }
                     
                     Spacer()
                     BottomBar()
