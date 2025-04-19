@@ -274,6 +274,7 @@ struct ProfileSetupView:View {
                                 )
                                 .cornerRadius(14)
                         }
+                        .disabled(stageNum == 0)
                         .shadow(radius: 5)
                         
                         Button(action: {
@@ -293,6 +294,7 @@ struct ProfileSetupView:View {
                                 )
                                 .cornerRadius(14)
                         }
+                        .disabled(stageNum == 2)
                         .shadow(radius: 5)
                     }
                     if(stageNum == 2){

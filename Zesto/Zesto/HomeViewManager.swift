@@ -26,6 +26,39 @@ let insightCardColors: [Color] = [
     Color.brown
 ]
 
+let mealTimes = ["Breakfast", "Lunch", "Dinner", "Snack"]
+
+let dishNames = [
+    "Big Mac", "Beef Rendang", "Chakchouka", "Bakewell tart", "French Onion Soup",
+    "Potato Salad (Olivier Salad)", "Breakfast Potatoes", "Dal fry",
+    "Bread and Butter Pudding", "Tunisian Lamb Soup", "Fettucine alfredo",
+    "Split Pea Soup", "Chicken Handi", "Sticky Toffee Pudding",
+    "Chicken Basquaise", "Piri-piri chicken and slaw"
+]
+
+let insightMessages = [
+    "Try reducing sugar for better health!",
+    "Eating more greens improves digestion.",
+    "Protein helps build muscle efficiently.",
+    "Stay hydrated for optimal performance!",
+    "Colorful plates mean a range of nutrients!",
+    "Whole grains offer longer-lasting energy.",
+    "Choose lean proteins for heart health.",
+    "Fermented foods boost gut bacteria.",
+    "Eating mindfully helps prevent overeating.",
+    "Healthy fats fuel your brain and body.",
+    "Portion control is key for balanced meals.",
+    "Limit processed foods for better wellness.",
+    "Hydration improves focus and energy.",
+    "A fiber-rich diet supports gut health.",
+    "Planning meals helps prevent unhealthy snacking.",
+    "Include herbs and spices for anti-inflammatory benefits.",
+    "Balanced diets are more sustainable than strict diets.",
+    "Cutting back on salt can lower blood pressure.",
+    "Antioxidant-rich foods support cell health.",
+    "Small changes lead to long-term habits!"
+]
+
 struct ImageResponse: Codable {
     let image_url: String
 }
@@ -55,42 +88,47 @@ class HomeViewManager: ObservableObject {
     
     let baseURL = "https://bobo999.pythonanywhere.com/get_image?dish="
     
+    
     init() {
-        let mealTimes = ["Breakfast", "Lunch", "Dinner", "Snack"]
-        let dishNames = ["Big Mac", "Beef Rendang", "Chakchouka", "Bakewell tart", "French Onion Soup", "Potato Salad (Olivier Salad)"
-        ]
-        // Generate 4 random recommended cards with image fetching
-        for index in 1...4 {
-            let randomMealTime = mealTimes[index-1]
-            let randomDish = dishNames.randomElement() ?? "Dish"
-            
+        loadCards()
+    }
+    
+    func loadCards(){
+        // Clear old data
+       recommendCards.removeAll()
+       insightCards.removeAll()
+       popularCards.removeAll()
+        
+        // Shuffle once for recommendCards
+        let shuffledDishesForRecommend = dishNames.shuffled()
+        
+        for index in 0..<min(mealTimes.count, shuffledDishesForRecommend.count) {
+            let randomMealTime = mealTimes[index]
+            let randomDish = shuffledDishesForRecommend[index]
             addRecommendCard(mealTime: randomMealTime, dishName: randomDish, imageURL: nil)
         }
-        
+
         // Generate 4 random AI insights
-        let insightMessages = [
-            "Try reducing sugar for better health!",
-            "Eating more greens improves digestion.",
-            "Protein helps build muscle efficiently.",
-            "Stay hydrated for optimal performance!"
-        ]
+
         for _ in 1...4 {
             let randomMessage = insightMessages.randomElement() ?? "Eat healthy!"
             addInsightCard(message: randomMessage)
         }
-        
-        // Generate 4 random popular dishes with image fetching
-        for _ in 1...4 {
-            let randomDish = dishNames.randomElement() ?? "Dish"
-            
-            addPopularCard(dishName: randomDish, imageURL: nil) // Fetches from API if nil
+
+        // Shuffle again for popularCards (different set, no overlap assumed)
+        let shuffledDishesForPopular = dishNames.shuffled()
+
+        for index in 0..<4 {
+            let randomDish = shuffledDishesForPopular[index]
+            addPopularCard(dishName: randomDish, imageURL: nil)  // Unique dish per card
         }
     }
+
     
     //fetch image for a given URL
     func fetchImageFromURL(urlString: String, completion: @escaping (Image?) -> Void) {
         guard let url = URL(string: urlString) else {
-            print("❌ Invalid URL")
+            print("Invalid URL")
             completion(nil)
             return
         }

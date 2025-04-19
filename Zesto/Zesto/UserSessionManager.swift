@@ -10,6 +10,7 @@ import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
 import SwiftUICore
+import SwiftUI
 
 enum SetupStatus {
     case unknown
@@ -77,6 +78,8 @@ class UserSessionManager: ObservableObject {
                                 return nil
                             }()
                     )
+                    
+
                 }
                 
             } else {
@@ -87,13 +90,14 @@ class UserSessionManager: ObservableObject {
 
     func logout() {
         do {
+
             try Auth.auth().signOut()
             self.currentUser = nil
             self.isLoggedIn = false
             self.setupStatus = .unknown
             self.userModel = nil
             
-            userRecipeManager.clearData()
+            
         } catch {
             print("Logout error: \(error.localizedDescription)")
         }

@@ -44,6 +44,7 @@ struct ZestoApp: App {
                         .environmentObject(userSession)
                         .environmentObject(inventoryViewModel)  
                         .environmentObject(userRecipe)
+                        .environmentObject(UserRecipeManager())
 
                 case .incomplete:
                     ProfileSetupView()

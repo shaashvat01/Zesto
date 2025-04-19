@@ -32,30 +32,43 @@ struct ProfileEditView: View {
         ScrollView{
             VStack(spacing: 20) {
                 // Profile Image
-                if let image = profileImage {
-                    Image(uiImage: image)
+                
+                if let profileImage = profileImage {
+                    Image(uiImage: profileImage)
                         .resizable()
                         .scaledToFill()
                         .frame(width: 100, height: 100)
                         .clipShape(Circle())
                         .shadow(radius: 5)
-                } else if let url = userSession.userModel?.profileImageURL {
-                    AsyncImage(url: url) { image in
-                        image.resizable()
-                    } placeholder: {
-                        ProgressView()
-                    }
-                    .scaledToFill()
-                    .frame(width: 100, height: 100)
-                    .clipShape(Circle())
-                    .shadow(radius: 5)
-                } else {
-                    Image(systemName: "person.crop.circle.fill.badge.plus")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 100, height: 100)
-                        .foregroundColor(.gray)
                 }
+                else{
+                    if let image = userSession.userModel?.profileImage {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 100, height: 100)
+                            .clipShape(Circle())
+                            .shadow(radius: 5)
+                    } else if let url = userSession.userModel?.profileImageURL {
+                        AsyncImage(url: url) { image in
+                            image.resizable()
+                        }placeholder: {
+                            ProgressView()
+                        }
+                        .scaledToFill()
+                        .frame(width: 100, height: 100)
+                        .clipShape(Circle())
+                        .shadow(radius: 5)
+                        
+                    } else {
+                        Image(systemName: "person.crop.circle.fill.badge.plus")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 100, height: 100)
+                            .foregroundColor(.gray)
+                    }
+                }
+
                 
                 PhotosPicker(selection: $selectedItem, matching: .images) {
                     Text("Change Profile Picture")
@@ -193,7 +206,7 @@ struct ProfileEditView: View {
             firstName: firstName,
             lastName: lastName,
             username: username,
-            dietaryPreferences: dietaryPreferences,
+            dietaryPreferences: Array(selectedRestrictions),
             profileImage: profileImage
         ) { result in
             DispatchQueue.main.async {
@@ -201,6 +214,10 @@ struct ProfileEditView: View {
                 switch result {
                 case .success:
                     print("Profile updated.")
+                    appState.topID = 4
+                    if let uiImage = profileImage {
+                        userSession.userModel?.profileImage = Image(uiImage: uiImage)
+                    }
                 case .failure(let error):
                     saveError = error.localizedDescription
                 }

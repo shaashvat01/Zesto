@@ -71,9 +71,9 @@ struct BottomBar: View {
                         Button {
                             appState.topID = 4
                         } label: {
-                            Image(systemName: "person.3")
+                            Image(systemName: "person")
                                 .resizable()
-                                .frame(width: 35, height: 30)
+                                .frame(width: 30, height: 30)
                                 .foregroundColor(.black)
                         }
                         Spacer()

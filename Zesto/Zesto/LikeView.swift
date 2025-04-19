@@ -71,5 +71,6 @@ struct LikeView: View {
 #Preview {
     LikeView()
         .environmentObject(UserRecipeManager())
+        .environmentObject(AppState())
 }
 

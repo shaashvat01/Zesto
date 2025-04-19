@@ -10,7 +10,7 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 
 struct HomePage: View {
-    @ObservedObject var homeManager: HomeViewManager
+    @ObservedObject var homeManager : HomeViewManager
     @EnvironmentObject var appState: AppState
 
     var body: some View {
@@ -78,6 +78,9 @@ struct HomePage: View {
                         .frame(width: geometry.size.width)
                         .frame(maxHeight: .infinity)
                         
+                    }
+                    .refreshable {
+                        homeManager.loadCards()
                     }
                     .frame(maxHeight: .infinity)
                     //.frame(maxWidth: .infinity, maxHeight: .infinity)

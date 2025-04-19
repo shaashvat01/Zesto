@@ -138,35 +138,108 @@ struct LoginView: View {
         }
     }
 
+//    func signup() {
+//    //Password Confirmation
+//    guard password == passwordConfirm else {
+//        errorMessage = "Passwords do not match!"
+//        return
+//    }
+//        Auth.auth().createUser(withEmail: mail , password: password) { (result, error) in
+//            if let error = error {
+//                print("Signup error: \(error.localizedDescription)")
+//                errorMessage = error.localizedDescription
+//            } else if let user = result?.user {
+//                print("Signed Up")
+//
+//                // Prepare Firestore reference
+//                let db = Firestore.firestore()
+//                let userRef = db.collection("users").document(user.uid)
+//
+//                // Store basic user details
+//                userRef.setData([
+//                    "firstName": firstName,
+//                    "lastName": lastName,
+//                    "username": userName,
+//                    "email": mail,
+//                    "createdAt": Timestamp()
+//                ]) { err in
+//                    if let err = err {
+//                        print("Error writing user data: \(err)")
+//                    } else {
+//                        print("User data saved successfully!")
+//                    }
+//                }
+//            }
+//        }
+//    }
+    
     func signup() {
-        Auth.auth().createUser(withEmail: mail , password: password) { (result, error) in
+        // Validate password match
+        guard password == passwordConfirm else {
+            errorMessage = "Passwords do not match!"
+            return
+        }
+
+        let db = Firestore.firestore()
+
+        // Check if username exists
+        db.collection("users").whereField("username", isEqualTo: userName).getDocuments { (querySnapshot, error) in
             if let error = error {
-                print("Signup error: \(error.localizedDescription)")
-                errorMessage = error.localizedDescription
-            } else if let user = result?.user {
-                print("Signed Up")
+                self.errorMessage = "Error checking username: \(error.localizedDescription)"
+                return
+            }
 
-                // Prepare Firestore reference
-                let db = Firestore.firestore()
-                let userRef = db.collection("users").document(user.uid)
+            guard querySnapshot?.isEmpty == true else {
+                self.errorMessage = "Username is already taken!"
+                return
+            }
 
-                // Store basic user details
-                userRef.setData([
-                    "firstName": firstName,
-                    "lastName": lastName,
-                    "username": userName,
-                    "email": mail,
-                    "createdAt": Timestamp()
-                ]) { err in
-                    if let err = err {
-                        print("Error writing user data: \(err)")
-                    } else {
-                        print("User data saved successfully!")
+            // Check if email already exists
+            db.collection("users").whereField("email", isEqualTo: mail).getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    self.errorMessage = "Error checking email: \(error.localizedDescription)"
+                    return
+                }
+
+                guard querySnapshot?.isEmpty == true else {
+                    self.errorMessage = "Email is already registered!"
+                    return
+                }
+
+                // Create Firebase Auth user
+                Auth.auth().createUser(withEmail: mail, password: password) { (result, error) in
+                    if let error = error {
+                        self.errorMessage = "Signup error: \(error.localizedDescription)"
+                        return
+                    }
+
+                    guard let user = result?.user else {
+                        self.errorMessage = "Signup failed: User not created."
+                        return
+                    }
+
+                    let userRef = db.collection("users").document(user.uid)
+
+                    userRef.setData([
+                        "firstName": firstName,
+                        "lastName": lastName,
+                        "username": userName,
+                        "email": mail,
+                        "createdAt": Timestamp()
+                    ]) { err in
+                        if let err = err {
+                            self.errorMessage = "Error saving user data: \(err.localizedDescription)"
+                        } else {
+                            self.errorMessage = ""
+                            print("User signed up and data saved successfully!")
+                        }
                     }
                 }
             }
         }
     }
+
+
 
     func login() {
         Auth.auth().signIn(withEmail: mail , password: password) { (result, error) in

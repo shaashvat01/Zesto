@@ -13,6 +13,7 @@ struct ProfileView: View {
     
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var userSession: UserSessionManager
+    @EnvironmentObject var recipeManager: UserRecipeManager
     
     @State var pageNumber = 0
     
@@ -164,6 +165,7 @@ struct ProfileView: View {
          
             // Log Out Button
             Button(action: {
+                recipeManager.clearData()
                 userSession.logout()
             }) {
                 Text("Log Out")

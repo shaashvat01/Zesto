@@ -34,17 +34,7 @@ struct TopBar: View {
                                     .font(.title2)
                                     .fontWeight(.bold)
                                     .foregroundColor(.black)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                Button
-                                {
-                                    userSession.logout()
-                                } label: {
-                                    Image(systemName: "line.3.horizontal")
-                                        .resizable()
-                                        .frame(width: 30, height: 30)
-                                        .foregroundColor(.black)
-                                }
+                                    .frame(maxWidth: .infinity,alignment: .leading)
                             }
                             .padding(.top, 40)
                             .padding(.horizontal, 20)

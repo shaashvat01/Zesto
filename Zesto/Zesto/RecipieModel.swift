@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct RecipeModel: Identifiable, Codable,Equatable,Hashable{
     var id = UUID()
@@ -14,6 +15,12 @@ struct RecipeModel: Identifiable, Codable,Equatable,Hashable{
     let ingredients: [String]
     let instructions: [String]
     let imageURL: URL
+
+    enum CodingKeys: String, CodingKey {
+            case id, name, tags, ingredients, instructions, imageURL
+        }
+    
+    var cachedImage: UIImage?
 }
 
 struct Meal: Codable {
