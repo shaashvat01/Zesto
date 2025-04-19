@@ -89,6 +89,7 @@ struct HomePage: View {
         }
         .onAppear {
                 appState.hideTopBar = false // ✅ Ensures TopBar is shown on HomePage
+            appState.recipeViewNumber = 0
             }
         
     }

@@ -119,22 +119,92 @@ struct TopBar: View {
                             .padding(.horizontal, 20)
                             .padding(.top, 40)
                                    
-                        case 5:
-                            HStack{
-                                Button(action: {
-                                    appState.topID = 4
-                                }) {
-                                    Image(systemName: "chevron.left")
-                                        .resizable()
-                                        .frame(width: 24, height: 24)
-                                        .foregroundColor(.black)
-                                        .padding(8)
+                        case 5: //profile view
+                            ZStack{
+                                HStack{
+                                    Button(action: {
+                                        appState.topID = 4
+                                    }) {
+                                        Image(systemName: "chevron.left")
+                                            .resizable()
+                                            .frame(width: 15, height: 20)
+                                            .foregroundColor(.black)
+                                            .padding(8)
+                                    }
+                                    
+                                    Spacer()
                                 }
                                 
-                                Spacer()
+                                HStack{
+                                    Text("Edit Profile")
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.black)
+                                        .frame(maxWidth: .infinity,alignment: .center)
+                                }
+                                
                             }
                             .padding(.horizontal, 20)
                             .padding(.top, 40)
+                            
+                        case 6: //Bookmark & Like View
+                            ZStack{
+                                HStack{
+                                    Button(action: {
+                                        appState.topID = 4
+                                    }) {
+                                        Image(systemName: "chevron.left")
+                                            .resizable()
+                                            .frame(width: 15, height: 20)
+                                            .foregroundColor(.black)
+                                            .padding(8)
+                                    }
+                                    
+                                    Spacer()
+                                }
+                                
+                                HStack{
+                                    Text("Your Bookmarks")
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.black)
+                                        .frame(maxWidth: .infinity,alignment: .center)
+                                }
+                                
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.top, 40)
+                            
+                        case 7: //Bookmark & Like View
+                            ZStack{
+                                HStack{
+                                    Button(action: {
+                                        appState.topID = 4
+                                    }) {
+                                        Image(systemName: "chevron.left")
+                                            .resizable()
+                                            .frame(width: 15, height: 20)
+                                            .foregroundColor(.black)
+                                            .padding(8)
+                                    }
+                                    
+                                    Spacer()
+                                }
+                                
+                                HStack{
+                                    Text("Your Likes")
+                                        .font(.title2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.black)
+                                        .frame(maxWidth: .infinity,alignment: .center)
+                                }
+                                
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.top, 40)
+                            
+                       
+                            
                             
                         default:
                             Text("")

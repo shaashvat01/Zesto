@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RecipeModel: Identifiable, Codable,Equatable{
+struct RecipeModel: Identifiable, Codable,Equatable,Hashable{
     var id = UUID()
     let name: String
     var tags: [String] = []

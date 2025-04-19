@@ -104,22 +104,55 @@ class UserRecipeManager: ObservableObject {
             }
     }
 
-    func removeRecipe(_ recipe: RecipeModel, from collection: String) {
+//    func removeRecipe(_ recipe: RecipeModel, from collection: String) {
+//        guard let uid = Auth.auth().currentUser?.uid else { return }
+//
+//        Firestore.firestore()
+//            .collection("users")
+//            .document(uid)
+//            .collection(collection)
+//            .document(recipe.id.uuidString)
+//            .delete { error in
+//                if let error = error {
+//                    print("Error deleting from \(collection): \(error.localizedDescription)")
+//                } else {
+//                    print("Recipe removed from \(collection).")
+//                }
+//            }
+//    }
+    
+    func removeRecipeByName(_ recipe: RecipeModel, from collection: String) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
 
-        Firestore.firestore()
+        let query = Firestore.firestore()
             .collection("users")
             .document(uid)
             .collection(collection)
-            .document(recipe.id.uuidString)
-            .delete { error in
-                if let error = error {
-                    print("Error deleting from \(collection): \(error.localizedDescription)")
-                } else {
-                    print("Recipe removed from \(collection).")
+            .whereField("name", isEqualTo: recipe.name)
+
+        query.getDocuments { snapshot, error in
+            if let error = error {
+                print("Error fetching recipe for deletion: \(error.localizedDescription)")
+                return
+            }
+
+            guard let documents = snapshot?.documents, !documents.isEmpty else {
+                print("No recipe with name \(recipe.name) found in \(collection).")
+                return
+            }
+
+            for doc in documents {
+                doc.reference.delete { error in
+                    if let error = error {
+                        print("Error deleting \(recipe.name) from \(collection): \(error.localizedDescription)")
+                    } else {
+                        print("Recipe '\(recipe.name)' removed from \(collection).")
+                    }
                 }
             }
+        }
     }
+
 
     // Convenience wrappers
     func addLike(_ recipe: RecipeModel) {
@@ -127,7 +160,7 @@ class UserRecipeManager: ObservableObject {
     }
 
     func removeLike(_ recipe: RecipeModel) {
-        removeRecipe(recipe, from: "likes")
+        removeRecipeByName(recipe, from: "likes")
     }
 
     func addBookmark(_ recipe: RecipeModel) {
@@ -135,15 +168,32 @@ class UserRecipeManager: ObservableObject {
     }
 
     func removeBookmark(_ recipe: RecipeModel) {
-        removeRecipe(recipe, from: "bookmarks")
+        removeRecipeByName(recipe, from: "bookmarks")
     }
     
+//    func isRecipeLiked(_ recipe: RecipeModel) -> Bool {
+//        return likes.contains { $0.id == recipe.id }
+//    }
+//
+//    func isRecipeBookmarked(_ recipe: RecipeModel) -> Bool {
+//        return bookmarks.contains { $0.id == recipe.id }
+//    }
+    
     func isRecipeLiked(_ recipe: RecipeModel) -> Bool {
-        return likes.contains { $0.id == recipe.id }
+        return likes.contains { $0.name == recipe.name }
     }
 
     func isRecipeBookmarked(_ recipe: RecipeModel) -> Bool {
-        return bookmarks.contains { $0.id == recipe.id }
+        return bookmarks.contains { $0.name == recipe.name }
     }
+    
+    func clearData() {
+        likes = []
+        bookmarks = []
+        listenerLikes?.remove()
+        listenerBookmarks?.remove()
+    }
+
+
 
 }
