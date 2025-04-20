@@ -126,7 +126,6 @@ struct StoreRowView: View
             }
             Spacer()
             
-            // Chevron on the right
             Image(systemName: "chevron.right")
                 .foregroundColor(.gray)
         }

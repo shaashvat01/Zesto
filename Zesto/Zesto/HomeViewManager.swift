@@ -70,7 +70,7 @@ extension UIImage {
         let ciImage = CIImage(image: self)
 
         filter.inputImage = ciImage
-        filter.scale = Float(scale)  // Scale factor (e.g., 2.0 for 2x upscaling)
+        filter.scale = Float(scale)
 
         guard let outputImage = filter.outputImage,
               let cgImage = context.createCGImage(outputImage, from: outputImage.extent) else {
@@ -137,14 +137,14 @@ class HomeViewManager: ObservableObject {
         URLSession.shared.dataTask(with: url) { data, response, error in
             // Handle any error or invalid data
             if let error = error {
-                print("❌ Error fetching image: \(error.localizedDescription)")
+                print("Error fetching image: \(error.localizedDescription)")
                 completion(nil)
                 return
             }
             
             // Check if data is valid
             guard let data = data, let uiImage = UIImage(data: data) else {
-                print("❌ Invalid image data")
+                print("Invalid image data")
                 completion(nil)
                 return
             }
@@ -165,22 +165,22 @@ class HomeViewManager: ObservableObject {
         
         guard let encodedDish = dishName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "\(baseURL)\(encodedDish)") else {
-            print("❌ Invalid URL for dish: \(dishName)")
+            print("Invalid URL for dish: \(dishName)")
             completion(nil)
             return
         }
         
-        print("🌍 Fetching recipe from: \(url)")
+        print("Fetching recipe from: \(url)")
         
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                print("❌ Error fetching data: \(error.localizedDescription)")
+                print("Error fetching data: \(error.localizedDescription)")
                 completion(nil)
                 return
             }
             
             guard let data = data else {
-                print("❌ No data received for recipe request.")
+                print("No data received for recipe request.")
                 completion(nil)
                 return
             }
@@ -230,7 +230,7 @@ class HomeViewManager: ObservableObject {
                 }
                 
             } catch {
-                print("❌ Failed to decode JSON: \(error)")
+                print("Failed to decode JSON: \(error)")
                 completion(nil)
             }
         }.resume()
@@ -244,22 +244,22 @@ class HomeViewManager: ObservableObject {
         
         guard let encodedDish = dishName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "\(baseURL)\(encodedDish)") else {
-            print("❌ Invalid URL for dish: \(dishName)")
+            print("Invalid URL for dish: \(dishName)")
             completion(placeholderURL)
             return
         }
         
-        print("🌍 Fetching image from: \(url)")
+        print("Fetching image from: \(url)")
         
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                print("❌ Error fetching image: \(error.localizedDescription)")
+                print("Error fetching image: \(error.localizedDescription)")
                 completion(placeholderURL)
                 return
             }
             
             guard let data = data else {
-                print("❌ No data received for image request.")
+                print("No data received for image request.")
                 completion(placeholderURL)
                 return
             }
@@ -268,13 +268,13 @@ class HomeViewManager: ObservableObject {
                 let response = try JSONDecoder().decode(MealDBResponse.self, from: data)
                 let imageUrl = response.meals?.first?.strMealThumb ?? placeholderURL
                 
-                print("✅ Successfully fetched image URL: \(imageUrl)")
+                print("Successfully fetched image URL: \(imageUrl)")
                 
                 DispatchQueue.main.async {
                     completion(imageUrl)
                 }
             } catch {
-                print("❌ Failed to decode JSON: \(error)")
+                print("Failed to decode JSON: \(error)")
                 completion(placeholderURL)
             }
         }.resume()
@@ -286,22 +286,22 @@ class HomeViewManager: ObservableObject {
         
         guard let encodedDish = dishName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "\(baseURL)\(encodedDish)") else {
-            print("❌ Invalid URL for dish: \(dishName)")
+            print("Invalid URL for dish: \(dishName)")
             completion(placeholderURL)
             return
         }
         
-        print("🌍 Fetching image from: \(url)")
+        print("Fetching image from: \(url)")
         
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
-                print("❌ Error fetching image: \(error.localizedDescription)")
+                print("Error fetching image: \(error.localizedDescription)")
                 completion(placeholderURL)
                 return
             }
             
             guard let data = data else {
-                print("❌ No data received for image request.")
+                print("No data received for image request.")
                 completion(placeholderURL)
                 return
             }
@@ -310,14 +310,14 @@ class HomeViewManager: ObservableObject {
                 let imageResponse = try JSONDecoder().decode(ImageResponse.self, from: data)
                 let imageUrl = imageResponse.image_url
                 
-                print("✅ Successfully fetched image URL: \(imageUrl)")
+                print("Successfully fetched image URL: \(imageUrl)")
                 
                 DispatchQueue.main.async {
                     self.objectWillChange.send()
                     completion(imageUrl)
                 }
             } catch {
-                print("❌ Failed to decode JSON: \(error)")
+                print("Failed to decode JSON: \(error)")
                 completion(placeholderURL)
             }
         }.resume()
@@ -330,7 +330,7 @@ class HomeViewManager: ObservableObject {
         else{
             fetchRecipeMealDB(for: dishName) { recipe in
                 guard let recipe = recipe else {
-                    print("❌ Failed to fetch recipe for \(dishName)")
+                    print("Failed to fetch recipe for \(dishName)")
                     return
                 }
                 
@@ -348,7 +348,7 @@ class HomeViewManager: ObservableObject {
                                 self.recommendCards.append(card)
                             }
                         } else {
-                            print("❌ Failed to fetch image for \(dishName)")
+                            print("Failed to fetch image for \(dishName)")
                         }
                         
                     }
@@ -370,7 +370,7 @@ class HomeViewManager: ObservableObject {
         else{
             fetchRecipeMealDB(for: dishName) { recipe in
                 guard let recipe = recipe else {
-                    print("❌ Failed to fetch recipe for \(dishName)")
+                    print("Failed to fetch recipe for \(dishName)")
                     return
                 }
                 
@@ -387,7 +387,7 @@ class HomeViewManager: ObservableObject {
                                 self.popularCards.append(card)
                             }
                         } else {
-                            print("❌ Failed to fetch image for \(dishName)")
+                            print("Failed to fetch image for \(dishName)")
                         }
                         
                     }
@@ -435,11 +435,6 @@ class HomeViewManager: ObservableObject {
             self.insightCards.removeAll()
             self.popularCards.removeAll()
         }
-        
-        
-        
-        
-        
         
     }
 

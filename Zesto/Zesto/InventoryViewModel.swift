@@ -9,78 +9,6 @@ import SwiftUI
 import SwiftData
 import Foundation
 
-func basicNormalize(_ text: String) -> String
-{
-    return text.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-}
-
-func normalizeText(_ text: String) -> String
-{
-    let lower = text.lowercased()
-    let noPunct = lower.components(separatedBy: CharacterSet.punctuationCharacters).joined(separator: " ")
-    let trimmed = noPunct.trimmingCharacters(in: .whitespacesAndNewlines)
-    
-    let tagger = NSLinguisticTagger(tagSchemes: [.lemma], options: 0)
-    tagger.string = trimmed
-    var words = [String]()
-    let range = NSRange(location: 0, length: trimmed.utf16.count)
-    tagger.enumerateTags(in: range, unit: .word, scheme: .lemma, options: [.omitPunctuation, .omitWhitespace]) { tag, tokenRange, _ in
-        if let lemma = tag?.rawValue
-        {
-            words.append(lemma)
-        }
-        else
-        {
-            let word = (trimmed as NSString).substring(with: tokenRange)
-            words.append(word)
-        }
-    }
-    return words.joined(separator: " ")
-}
-
-func levenshtein(_ a: String, _ b: String) -> Int {
-    let aArr = Array(a)
-    let bArr = Array(b)
-    var dist = [[Int]](repeating: [Int](repeating: 0, count: bArr.count + 1), count: aArr.count + 1)
-    for i in 0...aArr.count { dist[i][0] = i }
-    for j in 0...bArr.count { dist[0][j] = j }
-    for i in 1...aArr.count {
-        for j in 1...bArr.count {
-            if aArr[i-1] == bArr[j-1] {
-                dist[i][j] = dist[i-1][j-1]
-            } else {
-                dist[i][j] = min(dist[i-1][j], dist[i][j-1], dist[i-1][j-1]) + 1
-            }
-        }
-    }
-    return dist[aArr.count][bArr.count]
-}
-
-func similarityRatio(_ a: String, _ b: String) -> Double {
-    let maxLen = max(a.count, b.count)
-    if maxLen == 0 { return 100.0 }
-    let d = Double(levenshtein(a, b))
-    return (1.0 - d / Double(maxLen)) * 100.0
-}
-
-func isLikelySame(_ a: String, _ b: String, threshold: Double = 85.0) -> Bool {
-    return similarityRatio(a, b) >= threshold
-}
-
-func unifyItems(_ items: [ReceiptItem]) -> [ReceiptItem] {
-    var dict = [String: ReceiptItem]()
-    for item in items {
-        let key = basicNormalize(item.name) + "::" + basicNormalize(item.type)
-        if var exist = dict[key] {
-            exist.quantity += item.quantity
-            dict[key] = exist
-        } else {
-            dict[key] = item
-        }
-    }
-    return Array(dict.values)
-}
-
 class InventoryViewModel: ObservableObject
 {
     @Published var allItems: [InventoryItem] = []
@@ -244,4 +172,79 @@ func fetchImage(for dishName: String, type: String?, completion: @escaping (Stri
             completion(placeholder)
         }
     }.resume()
+}
+
+// standard functions to match the names in the inventory
+// makes sure to check the similar names like: COFF and COFFEE
+
+func basicNormalize(_ text: String) -> String
+{
+    return text.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+}
+
+func normalizeText(_ text: String) -> String
+{
+    let lower = text.lowercased()
+    let noPunct = lower.components(separatedBy: CharacterSet.punctuationCharacters).joined(separator: " ")
+    let trimmed = noPunct.trimmingCharacters(in: .whitespacesAndNewlines)
+    
+    let tagger = NSLinguisticTagger(tagSchemes: [.lemma], options: 0)
+    tagger.string = trimmed
+    var words = [String]()
+    let range = NSRange(location: 0, length: trimmed.utf16.count)
+    tagger.enumerateTags(in: range, unit: .word, scheme: .lemma, options: [.omitPunctuation, .omitWhitespace]) { tag, tokenRange, _ in
+        if let lemma = tag?.rawValue
+        {
+            words.append(lemma)
+        }
+        else
+        {
+            let word = (trimmed as NSString).substring(with: tokenRange)
+            words.append(word)
+        }
+    }
+    return words.joined(separator: " ")
+}
+
+func levenshtein(_ a: String, _ b: String) -> Int {
+    let aArr = Array(a)
+    let bArr = Array(b)
+    var dist = [[Int]](repeating: [Int](repeating: 0, count: bArr.count + 1), count: aArr.count + 1)
+    for i in 0...aArr.count { dist[i][0] = i }
+    for j in 0...bArr.count { dist[0][j] = j }
+    for i in 1...aArr.count {
+        for j in 1...bArr.count {
+            if aArr[i-1] == bArr[j-1] {
+                dist[i][j] = dist[i-1][j-1]
+            } else {
+                dist[i][j] = min(dist[i-1][j], dist[i][j-1], dist[i-1][j-1]) + 1
+            }
+        }
+    }
+    return dist[aArr.count][bArr.count]
+}
+
+func similarityRatio(_ a: String, _ b: String) -> Double {
+    let maxLen = max(a.count, b.count)
+    if maxLen == 0 { return 100.0 }
+    let d = Double(levenshtein(a, b))
+    return (1.0 - d / Double(maxLen)) * 100.0
+}
+
+func isLikelySame(_ a: String, _ b: String, threshold: Double = 85.0) -> Bool {
+    return similarityRatio(a, b) >= threshold
+}
+
+func unifyItems(_ items: [ReceiptItem]) -> [ReceiptItem] {
+    var dict = [String: ReceiptItem]()
+    for item in items {
+        let key = basicNormalize(item.name) + "::" + basicNormalize(item.type)
+        if var exist = dict[key] {
+            exist.quantity += item.quantity
+            dict[key] = exist
+        } else {
+            dict[key] = item
+        }
+    }
+    return Array(dict.values)
 }

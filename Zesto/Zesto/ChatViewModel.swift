@@ -63,7 +63,9 @@ class ChatViewModel: ObservableObject
     
     func updateSystemContext()
     {
-        let items = inventoryViewModel.allItems
+        let fetchDesc = FetchDescriptor<InventoryItem>()
+        let items = (try? context.fetch(fetchDesc)) ?? []
+        
         let inventoryItemsDescription = items.isEmpty ? "No items" : items.map { "\($0.name) (\($0.quantity))" }.joined(separator: ", ")
         
         let dietaryRestrictionsDescription: String = {

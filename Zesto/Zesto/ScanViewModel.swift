@@ -49,8 +49,6 @@ class ScanViewModel: ObservableObject {
         isLoading = false
     }
     
-    // MARK: - Main Scanning Logic
-    
     func processImage(_ image: UIImage) {
         isLoading = true
         

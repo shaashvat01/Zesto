@@ -89,9 +89,6 @@ struct ProfileView: View {
                 Spacer()
             }
             .padding()
-            //                .background(.ultraThinMaterial)
-            //                .cornerRadius(20)
-            //                .shadow(radius: 5)
             
            // Options List
             VStack(spacing: 16) {
@@ -128,24 +125,6 @@ struct ProfileView: View {
                     .cornerRadius(14)
                     .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
                 }
-
-                
-                    
-                    
-                    
-//                    HStack {
-//                        Text("Your Likes")
-//                            .foregroundColor(.black)
-//                            .font(.headline)
-//                        Spacer()
-//                        Image(systemName: "chevron.right")
-//                            .foregroundColor(.gray)
-//                    }
-//                    .padding()
-//                    .background(Color.white.opacity(0.9))
-//                    .cornerRadius(14)
-//                    .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
-                    
                     HStack {
                         Text("Settings")
                             .foregroundColor(.black)
@@ -194,8 +173,6 @@ struct ProfileView: View {
     }
         
 }
-
-
 
 #Preview {
     ProfileView()

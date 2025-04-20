@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ScanView: View {
-    @ObservedObject var viewModel: ScanViewModel  // Provided by MainView
+    @ObservedObject var viewModel: ScanViewModel
     @ObservedObject var inventoryVM: InventoryViewModel
     @EnvironmentObject var appState: AppState
     var body: some View {
@@ -48,7 +48,6 @@ struct ScanView: View {
                         .cornerRadius(15)
                     }
                 }
-                // Show the system's picker if needed
                 .sheet(isPresented: $viewModel.showImagePicker) {
                     if let sourceType = viewModel.sourceType {
                         ImagePicker(sourceType: sourceType, selectedImage: $viewModel.selectedImage)
@@ -58,9 +57,9 @@ struct ScanView: View {
                 // When user selects an image, automatically process it and navigate
                 .onChange(of: viewModel.selectedImage) { newImage in
                     if let image = newImage {
-                        // 1) Process the image
+                        // Process the image
                         viewModel.processImage(image)
-                        // 2) Show the result screen
+                        // Show the result screen
                         viewModel.isShowingResult = true
                     }
                 }

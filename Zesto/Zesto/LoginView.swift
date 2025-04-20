@@ -138,41 +138,6 @@ struct LoginView: View {
         }
     }
 
-//    func signup() {
-//    //Password Confirmation
-//    guard password == passwordConfirm else {
-//        errorMessage = "Passwords do not match!"
-//        return
-//    }
-//        Auth.auth().createUser(withEmail: mail , password: password) { (result, error) in
-//            if let error = error {
-//                print("Signup error: \(error.localizedDescription)")
-//                errorMessage = error.localizedDescription
-//            } else if let user = result?.user {
-//                print("Signed Up")
-//
-//                // Prepare Firestore reference
-//                let db = Firestore.firestore()
-//                let userRef = db.collection("users").document(user.uid)
-//
-//                // Store basic user details
-//                userRef.setData([
-//                    "firstName": firstName,
-//                    "lastName": lastName,
-//                    "username": userName,
-//                    "email": mail,
-//                    "createdAt": Timestamp()
-//                ]) { err in
-//                    if let err = err {
-//                        print("Error writing user data: \(err)")
-//                    } else {
-//                        print("User data saved successfully!")
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
     func signup() {
         // Validate password match
         guard password == passwordConfirm else {

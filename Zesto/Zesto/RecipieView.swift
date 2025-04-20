@@ -13,8 +13,6 @@ struct RecipieView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var userRecipe: UserRecipeManager
     
-    
-    
     var body: some View {
             ScrollView {
                 GeometryReader { geometry in
@@ -53,11 +51,6 @@ struct RecipieView: View {
                                     
                                     presentationMode.wrappedValue.dismiss()
                                     
-                                    
-                                    
-                                    
-                                    
-                                    
                                 }) {
                                     HStack(spacing: 6) {
                                         Image(systemName: "arrow.left.circle.fill")
@@ -86,8 +79,6 @@ struct RecipieView: View {
                                 .cornerRadius(10)
                                 .padding([.leading, .bottom], 16)
                         }
-                        
-                        
                         
                     }
                     .frame(height: height)

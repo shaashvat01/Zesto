@@ -21,13 +21,15 @@ struct EditInventoryView: View {
     
     var body: some View {
         NavigationView {
-            Form {
+            Form
+            {
                 TextField("Name", text: $item.name)
                 TextField("Quantity", value: $item.quantity, format: .number)
                 TextField("Price", value: $item.price, format: .currency(code: "USD"))
                 
                 // New Picker for editing the item's type.
-                Picker("Category", selection: $item.type) {
+                Picker("Category", selection: $item.type)
+                {
                     ForEach(categories, id: \.self) { category in
                         Text(category).tag(category)
                     }
@@ -35,12 +37,18 @@ struct EditInventoryView: View {
             }
             .navigationTitle("Edit Item")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
-                        do {
+            .toolbar
+            {
+                ToolbarItem(placement: .navigationBarTrailing)
+                {
+                    Button("Save")
+                    {
+                        do
+                        {
                             try context.save()
-                        } catch {
+                        }
+                        catch
+                        {
                             print("Error saving: \(error)")
                         }
                         dismiss()

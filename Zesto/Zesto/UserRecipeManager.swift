@@ -100,26 +100,17 @@ class UserRecipeManager: ObservableObject {
                     print("Error saving to \(collection): \(error.localizedDescription)")
                 } else {
                     print("Recipe saved to \(collection)!")
+                    DispatchQueue.main.async {
+                        if (collection == "likes" && self.likes.isEmpty) ||
+                           (collection == "bookmarks" && self.bookmarks.isEmpty) {
+                            self.refreshListeners()
+                        }
+                    }
                 }
             }
     }
 
-//    func removeRecipe(_ recipe: RecipeModel, from collection: String) {
-//        guard let uid = Auth.auth().currentUser?.uid else { return }
-//
-//        Firestore.firestore()
-//            .collection("users")
-//            .document(uid)
-//            .collection(collection)
-//            .document(recipe.id.uuidString)
-//            .delete { error in
-//                if let error = error {
-//                    print("Error deleting from \(collection): \(error.localizedDescription)")
-//                } else {
-//                    print("Recipe removed from \(collection).")
-//                }
-//            }
-//    }
+
     
     func removeRecipeByName(_ recipe: RecipeModel, from collection: String) {
         guard let uid = Auth.auth().currentUser?.uid else { return }
@@ -171,13 +162,6 @@ class UserRecipeManager: ObservableObject {
         removeRecipeByName(recipe, from: "bookmarks")
     }
     
-//    func isRecipeLiked(_ recipe: RecipeModel) -> Bool {
-//        return likes.contains { $0.id == recipe.id }
-//    }
-//
-//    func isRecipeBookmarked(_ recipe: RecipeModel) -> Bool {
-//        return bookmarks.contains { $0.id == recipe.id }
-//    }
     
     func isRecipeLiked(_ recipe: RecipeModel) -> Bool {
         return likes.contains { $0.name == recipe.name }
@@ -194,6 +178,11 @@ class UserRecipeManager: ObservableObject {
         listenerBookmarks?.remove()
     }
 
+    func refreshListeners() {
+        listenerLikes?.remove()
+        listenerBookmarks?.remove()
+        setupListeners()
+    }
 
 
 }

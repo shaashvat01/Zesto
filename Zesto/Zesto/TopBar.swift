@@ -193,9 +193,6 @@ struct TopBar: View {
                             .padding(.horizontal, 20)
                             .padding(.top, 40)
                             
-                       
-                            
-                            
                         default:
                             Text("")
                         }

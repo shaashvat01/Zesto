@@ -60,7 +60,8 @@ class ChatAPIService
         let body: [String: Any] = [
             "model": "gpt-3.5-turbo",
             "messages": messagesToSend,
-            "temperature": 0.2
+            "temperature": 0.2,
+            "top_p": 0.9
         ]
         
         do

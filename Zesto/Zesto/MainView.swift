@@ -28,15 +28,9 @@ struct MainView: View {
                     TopBar(showMenu: $showMenu)
                     Spacer()
                     
-                    if appState.topID == 0 {
-                        ZStack{
-                            HomePage(homeManager: homeViewModel)
-                            if showMenu {
-                                SlideInMenu(showMenu: $showMenu)
-                                    .transition(.move(edge: .trailing))
-                                    .zIndex(1)
-                            }
-                        }
+                    if appState.topID == 0
+                    {
+                        HomePage(homeManager: homeViewModel)
                         
                     }
                     else if appState.topID == 1 {
@@ -72,10 +66,6 @@ struct MainView: View {
                     
                     
                 }
-                
-                
-                
-                
                 
             }
             .animation(.easeInOut, value: showMenu)

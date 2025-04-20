@@ -124,9 +124,6 @@ struct ProfileEditView: View {
                         .cornerRadius(12)
                 }
                 
-                
-                
-                
                 // Dietary Preferences Picker
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Dietary Restrictions")

@@ -12,72 +12,6 @@ import FirebaseFirestore
 import FirebaseStorage
 import PhotosUI
 
-
-let dietaryOptions = [
-    "Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free",
-    "Nut Allergy", "Halal", "Kosher", "Peanut Allergy",
-    "Lactose Intolerant", "Shellfish Allergy"
-]
-
-let lifestyleOptions = [
-    "Vegetarian",
-    "Vegan",
-    "Pescatarian",
-    "Paleo",
-    "Keto",
-    "Low-Carb",
-    "Raw Food",
-    "Whole30",
-    "Flexitarian"
-]
-
-let healthRestrictions = [
-    "Gluten-Free",
-    "Dairy-Free",
-    "Lactose Intolerant",
-    "Low FODMAP",
-    "Low Sodium",
-    "Low Sugar",
-    "No Added Sugar",
-    "Diabetic-Friendly",
-    "Cholesterol-Conscious",
-    "Heart-Healthy"
-]
-
-let allergies = [
-    "Nut Allergy",
-    "Peanut Allergy",
-    "Tree Nut Allergy",
-    "Shellfish Allergy",
-    "Fish Allergy",
-    "Egg Allergy",
-    "Soy Allergy",
-    "Wheat Allergy",
-    "Sesame Allergy",
-    "Corn Allergy",
-    "Mustard Allergy",
-    "Gluten Allergy",
-    "Sulfite Sensitivity",
-    "Food Dye Allergy"
-]
-
-let culturalReligiousRestrictions = [
-    "Halal",
-    "Kosher",
-    "Jain Vegetarian",
-    "Hindu Vegetarian",
-    "Buddhist Vegetarian",
-    "No Beef",
-    "No Pork"
-]
-
-let otherRestrictions = [
-    "Alcohol-Free",
-    "Caffeine-Free",
-    "MSG-Free"
-]
-
-
 struct ProfileSetupView:View {
     @EnvironmentObject var userSession: UserSessionManager
     @State private var dateOfBirth: Date = Date()
@@ -124,11 +58,6 @@ struct ProfileSetupView:View {
                                 .fill(stageNum >= 0 ? Color.green : Color.white)
                                 .frame(width: 100, height: 10)
                                 .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.green, lineWidth: 2))
-                            
-//                            Circle()
-//                                .frame(width: 30, height: 30)
-//                                .foregroundColor(.white)
-//                                .shadow(radius: 5)
 
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(stageNum >= 1 ? Color.green : Color.white)
@@ -140,24 +69,6 @@ struct ProfileSetupView:View {
                                 .frame(width: 100, height: 10)
                                 .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.green, lineWidth: 2))
                         }
-
-                        // The stage markers (circles)
-//                        HStack {
-//                            Spacer()
-//                            
-//                            
-//                            Circle()
-//                                .frame(width: 30, height: 30)
-//                                .foregroundColor(.white)
-//                                .shadow(radius: 5)
-//                            Spacer()
-//                            Circle()
-//                                .frame(width: 30, height: 30)
-//                                .foregroundColor(.white)
-//                                .shadow(radius: 5)
-//                            Spacer()
-//                        }
-//                        .frame(width: 300) // Matches total bar width
                     }
                     
                     Spacer()
@@ -250,11 +161,7 @@ struct ProfileSetupView:View {
 
                     }
                     
-                   
-                    
                     Spacer()
-                    
-                    
                     
                     HStack{
                         
@@ -306,9 +213,6 @@ struct ProfileSetupView:View {
                             
                             let db = Firestore.firestore()
                             let storageRef = Storage.storage().reference().child("profileImages/\(userID).jpg")
-                            
-                            // Assuming you added this state earlier:
-                            // @State private var profileImage: UIImage? = nil
                             
                             if let imageData = profileImage?.jpegData(compressionQuality: 0.8) {
                                 storageRef.putData(imageData, metadata: nil) { metadata, error in
@@ -376,11 +280,6 @@ struct ProfileSetupView:View {
                         }
                         .shadow(radius: 5)
                     }
-
-
-                    
-                
-                    
                 }
                 
             }
@@ -485,10 +384,6 @@ struct WrapTagsView: View {
         }
     }
 }
-
-    
-
-
 #Preview {
     ProfileSetupView()
         .environmentObject(UserSessionManager())

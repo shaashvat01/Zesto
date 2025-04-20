@@ -91,7 +91,7 @@ struct HomePage: View {
             }
         }
         .onAppear {
-                appState.hideTopBar = false // ✅ Ensures TopBar is shown on HomePage
+                appState.hideTopBar = false
             appState.recipeViewNumber = 0
             }
         
@@ -143,13 +143,8 @@ struct RecommendedCards: View {
                                     }
                                 }
                                 
-                                
-                                
                             }
                         }
-                        
-                        
-                        
                         
                         RoundedRectangle(cornerRadius: 10)
                             .fill(
