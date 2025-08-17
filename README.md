@@ -106,7 +106,7 @@ Zesto is a sophisticated iOS application that transforms the way users approach 
 
 #### **Main Features**
 <div align="center">
-  <img src="screenshots/01-home-screen.png" width="200" style="margin: 0 10px;"/>
+  <img src="screenshots/01-home-screen.png" width="200"/> &nbsp;
   <img src="screenshots/02-receipt-scanning.png" width="200" style="margin: 0 10px;"/>
   <img src="screenshots/03-inventory-management.png" width="200" style="margin: 0 10px;"/>
   <img src="screenshots/04-recipe-discovery.png" width="200" style="margin: 0 10px;"/>
