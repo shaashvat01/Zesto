@@ -15,6 +15,7 @@
 		50764E182DA7976E007A17B6 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 50764E172DA7976E007A17B6 /* GoogleSignIn */; };
 		50764E1A2DA7976E007A17B6 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 50764E192DA7976E007A17B6 /* GoogleSignInSwift */; };
 		8164D8882DA0674000BF26FF /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 8164D8872DA0674000BF26FF /* Lottie */; };
+		816E54A02E5290E600ACD916 /* OpenFoodFactsSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 816E549F2E5290E600ACD916 /* OpenFoodFactsSDK */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 			files = (
 				50764E0D2DA7974D007A17B6 /* FirebaseAnalytics in Frameworks */,
 				50764E0F2DA7974D007A17B6 /* FirebaseAuth in Frameworks */,
+				816E54A02E5290E600ACD916 /* OpenFoodFactsSDK in Frameworks */,
 				50764E112DA7974D007A17B6 /* FirebaseDatabase in Frameworks */,
 				50764E1A2DA7976E007A17B6 /* GoogleSignInSwift in Frameworks */,
 				50764E132DA7974D007A17B6 /* FirebaseFirestore in Frameworks */,
@@ -105,6 +107,7 @@
 				50764E142DA7974D007A17B6 /* FirebaseStorage */,
 				50764E172DA7976E007A17B6 /* GoogleSignIn */,
 				50764E192DA7976E007A17B6 /* GoogleSignInSwift */,
+				816E549F2E5290E600ACD916 /* OpenFoodFactsSDK */,
 			);
 			productName = Zesto;
 			productReference = 50824C7D2D7E53E900BA3673 /* Zesto.app */;
@@ -138,6 +141,7 @@
 				8164D8862DA0674000BF26FF /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				50764E0B2DA7974D007A17B6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				50764E162DA7976E007A17B6 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				816E549E2E5290E600ACD916 /* XCRemoteSwiftPackageReference "openfoodfacts-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 50824C7E2D7E53E900BA3673 /* Products */;
@@ -401,6 +405,14 @@
 				minimumVersion = 4.5.1;
 			};
 		};
+		816E549E2E5290E600ACD916 /* XCRemoteSwiftPackageReference "openfoodfacts-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/openfoodfacts/openfoodfacts-swift";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -443,6 +455,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8164D8862DA0674000BF26FF /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
+		};
+		816E549F2E5290E600ACD916 /* OpenFoodFactsSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 816E549E2E5290E600ACD916 /* XCRemoteSwiftPackageReference "openfoodfacts-swift" */;
+			productName = OpenFoodFactsSDK;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

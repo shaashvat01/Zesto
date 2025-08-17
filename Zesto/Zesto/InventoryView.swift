@@ -195,6 +195,12 @@ struct InventoryView: View {
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
             .background(Color.white)
+            
+            Text("Product data and images from Open Food Facts © contributors, licensed under ODbL and CC-BY-SA.")
+                .font(.footnote)
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+
         }
         .sheet(item: $editing) { item in
             EditInventoryView(item: item)
