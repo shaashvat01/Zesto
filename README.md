@@ -102,37 +102,15 @@ Zesto is a sophisticated iOS application that transforms the way users approach 
 
 ## 📱 Screenshots
 
-### **Main Interface**
-![Home Screen](screenshots/01-home-screen.png)
-*Main dashboard with AI insights and recipe recommendations*
+### **App Interface Overview**
+<div align="center">
 
-### **Receipt Scanning**
-![Receipt Scanner](screenshots/02-receipt-scanning.png)
-*Camera interface for scanning grocery receipts*
+![Home Screen](screenshots/01-home-screen.png =200x400) ![Receipt Scanner](screenshots/02-receipt-scanning.png =200x400) ![Inventory View](screenshots/03-inventory-management.png =200x400) ![Recipe View](screenshots/04-recipe-discovery.png =200x400)
 
-### **Inventory Management**
-![Inventory View](screenshots/03-inventory-management.png)
-*Food inventory organized by categories with search functionality*
+![Shopping List](screenshots/05-shopping-list.png =200x400) ![Store Map](screenshots/06-store-locator.png =200x400) ![AI Chat](screenshots/07-ai-chat.png =200x400) ![User Profile](screenshots/08-user-profile.png =200x400)
 
-### **Recipe Discovery**
-![Recipe View](screenshots/04-recipe-discovery.png)
-*Detailed recipe view with ingredients and instructions*
-
-### **Shopping List**
-![Shopping List](screenshots/05-shopping-list.png)
-*Interactive shopping list with checkboxes and item management*
-
-### **Store Locator**
-![Store Map](screenshots/06-store-locator.png)
-*Map view showing nearby grocery stores*
-
-### **AI Chat Assistant**
-![AI Chat](screenshots/07-ai-chat.png)
-*AI-powered shopping assistant chat interface*
-
-### **User Profile**
-![User Profile](screenshots/08-user-profile.png)
-*User profile with dietary preferences and settings*
+*From left to right: Home Dashboard, Receipt Scanning, Inventory Management, Recipe Discovery, Shopping List, Store Locator, AI Chat Assistant, and User Profile*
+</div>
 
 ## 🔧 Configuration
 
