@@ -103,13 +103,17 @@ Zesto is a sophisticated iOS application that transforms the way users approach 
 ## 📱 Screenshots
 
 ### **App Interface Overview**
+
 <div align="center">
 
-![Home Screen](screenshots/01-home-screen.png =200x400) ![Receipt Scanner](screenshots/02-receipt-scanning.png =200x400) ![Inventory View](screenshots/03-inventory-management.png =200x400) ![Recipe View](screenshots/04-recipe-discovery.png =200x400)
+**Main Features**
+![Home Screen](screenshots/01-home-screen.png) ![Receipt Scanner](screenshots/02-receipt-scanning.png) ![Inventory View](screenshots/03-inventory-management.png) ![Recipe View](screenshots/04-recipe-discovery.png)
 
-![Shopping List](screenshots/05-shopping-list.png =200x400) ![Store Map](screenshots/06-store-locator.png =200x400) ![AI Chat](screenshots/07-ai-chat.png =200x400) ![User Profile](screenshots/08-user-profile.png =200x400)
+**Additional Features**
+![Shopping List](screenshots/05-shopping-list.png) ![Store Map](screenshots/06-store-locator.png) ![AI Chat](screenshots/07-ai-chat.png) ![User Profile](screenshots/08-user-profile.png)
 
 *From left to right: Home Dashboard, Receipt Scanning, Inventory Management, Recipe Discovery, Shopping List, Store Locator, AI Chat Assistant, and User Profile*
+
 </div>
 
 ## 🔧 Configuration
