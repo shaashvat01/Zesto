@@ -165,7 +165,7 @@ func fetchImage(for dishName: String,
     }
     
     var request = URLRequest(url: url)
-    request.addValue("GroceryInventoryApp/1.0 (youremail@example.com)", forHTTPHeaderField: "User-Agent")
+    request.addValue("GroceryInventoryApp/1.0", forHTTPHeaderField: "User-Agent")
     
     print("🔎 Fetching image from OFF: \(url)")
     
@@ -185,7 +185,8 @@ func fetchImage(for dishName: String,
         do {
             let resp = try JSONDecoder().decode(OFFSearchResponse.self, from: data)
             if let first = resp.products.first {
-                let imgUrl = first.image_front_url ?? first.image_url
+                // Match old backend behavior: prefer image_url
+                let imgUrl = first.image_url ?? first.image_front_url
                 print("✅ Got image URL: \(imgUrl ?? "none")")
                 DispatchQueue.main.async {
                     completion(imgUrl ?? placeholder)
@@ -198,6 +199,7 @@ func fetchImage(for dishName: String,
             print("❌ Decode error: \(error)")
             completion(placeholder)
         }
+
     }.resume()
 }
 // standard functions to match the names in the inventory
