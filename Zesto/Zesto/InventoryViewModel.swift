@@ -136,44 +136,72 @@ class InventoryViewModel: ObservableObject
     }
 }
 
-func fetchImage(for dishName: String, type: String?, completion: @escaping (String?) -> Void) {
+let userAgent = "GroceryInventoryApp/1.0"
+
+struct OFFProduct: Decodable {
+    let code: String
+    let product_name: String?
+    let image_url: String?
+    let image_front_url: String?
+}
+
+struct OFFSearchResponse: Decodable {
+    let products: [OFFProduct]
+}
+
+func fetchImage(for dishName: String,
+                type: String?,
+                completion: @escaping (String?) -> Void) {
+    
     let placeholder = "https://via.placeholder.com/150"
     let query = type == nil ? dishName : "\(dishName) \(type!)"
-    let base = "https://bobo999.pythonanywhere.com/get_image?dish="
+    
     guard let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
-          let url = URL(string: "\(base)\(encoded)") else {
-        print("Bad URL for \(dishName) type: \(type ?? "nil")")
+          let url = URL(string: "https://world.openfoodfacts.org/cgi/search.pl?search_terms=\(encoded)&search_simple=1&action=process&json=1")
+    else {
+        print("❌ Bad URL for \(dishName) type: \(type ?? "nil")")
         completion(placeholder)
         return
     }
     
-    print("Fetching image from: \(url)")
+    var request = URLRequest(url: url)
+    request.addValue("GroceryInventoryApp/1.0", forHTTPHeaderField: "User-Agent")
     
-    URLSession.shared.dataTask(with: url) { data, _, error in
+    print("🔎 Fetching image from OFF: \(url)")
+    
+    URLSession.shared.dataTask(with: request) { data, _, error in
         if let err = error {
-            print("Error: \(err.localizedDescription)")
+            print("❌ Error: \(err.localizedDescription)")
             completion(placeholder)
             return
         }
+        
         guard let data = data else {
-            print("No data.")
+            print("❌ No data.")
             completion(placeholder)
             return
         }
+        
         do {
-            let imgResp = try JSONDecoder().decode(ImageResponse.self, from: data)
-            let imgUrl = imgResp.image_url
-            print("Got image URL: \(imgUrl)")
-            DispatchQueue.main.async {
-                completion(imgUrl)
+            let resp = try JSONDecoder().decode(OFFSearchResponse.self, from: data)
+            if let first = resp.products.first {
+                // Match old backend behavior: prefer image_url
+                let imgUrl = first.image_url ?? first.image_front_url
+                print("✅ Got image URL: \(imgUrl ?? "none")")
+                DispatchQueue.main.async {
+                    completion(imgUrl ?? placeholder)
+                }
+            } else {
+                print("⚠️ No products found for query: \(query)")
+                completion(placeholder)
             }
         } catch {
-            print("Decode error: \(error)")
+            print("❌ Decode error: \(error)")
             completion(placeholder)
         }
+
     }.resume()
 }
-
 // standard functions to match the names in the inventory
 // makes sure to check the similar names like: COFF and COFFEE
 
