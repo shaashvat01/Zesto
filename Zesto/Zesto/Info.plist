@@ -2,11 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSCameraUsageDescription</key>
-	<string>This app uses the camera to scan grocery items for adding to your inventory.</string>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>This app needs access to your photo library to let you upload food images for your recipes.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app uses your location to show nearby grocery stores.</string>
+    <!-- Camera -->
+    <key>NSCameraUsageDescription</key>
+    <string>Zesto uses the camera to let you scan grocery receipts directly. The app processes the text from the receipt on your device to automatically extract items, prices, and categories so they can be added to your pantry. The images are not stored permanently, shared with others, or used for any purpose beyond this scan.</string>
+
+    <!-- Photo Library (import) -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Zesto allows you to import an existing photo of a grocery receipt from your photo library. This lets the app extract grocery items and add them to your pantry without requiring a new scan. Only the specific photo you select is accessed. The app does not browse your entire library, store your photos, or upload them anywhere.</string>
+
+    <!-- Location -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>Zesto uses your current location while the app is open to help you find nearby grocery stores and provide map directions. Your location is only used for this purpose, is not stored permanently, and is never shared with third parties.</string>
 </dict>
 </plist>
