@@ -162,11 +162,28 @@ class HomeViewManager: ObservableObject {
         }.resume()  // Start the data task
     }
     
+    enum Secrets {
+        private static func value(for key: String) -> String {
+            guard
+                let url = Bundle.main.url(forResource: "secrets", withExtension: "plist"),
+                let data = try? Data(contentsOf: url),
+                let dict = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any],
+                let val = dict[key] as? String, !val.isEmpty
+            else {
+                fatalError("Missing or empty key '\(key)' in secrets.plist")
+            }
+            return val
+        }
+
+        static var mealDBBaseURL: String { value(for: "MealDB") }  // e.g. https://www.themealdb.com/api/json/v2/65232507/
+    }
+
+    
     
     //func to fetch full recipe model
     func fetchRecipeMealDB(for dishName: String, completion: @escaping (RecipeModel?) -> Void) {
         let placeholderURL = URL(string: "https://via.placeholder.com/150")!
-        let baseURL = "https://www.themealdb.com/api/json/v1/1/search.php?s="
+        let baseURL = Secrets.mealDBBaseURL + "search.php?s="
         
         guard let encodedDish = dishName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "\(baseURL)\(encodedDish)") else {
@@ -245,7 +262,7 @@ class HomeViewManager: ObservableObject {
     // image URL fetch for MealDB service [Currently only returns URL BUT CAN RETURN ENTIRE RECIPIE OBJECT]
     func fetchImageMealDB(for dishName: String, completion: @escaping (String?) -> Void) {
         let placeholderURL = "https://via.placeholder.com/150"
-        let baseURL = "https://www.themealdb.com/api/json/v1/1/search.php?s="
+        let baseURL = Secrets.mealDBBaseURL + "search.php?s="
         
         guard let encodedDish = dishName.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let url = URL(string: "\(baseURL)\(encodedDish)") else {
