@@ -15,7 +15,7 @@ struct BottomBar: View {
                 ZStack{
                     Rectangle()
                         .fill(Color.green.opacity(0.85))
-                        .frame(width: 500, height: 75)
+                        .frame(maxWidth: .infinity, minHeight: 75, maxHeight: 75)
                     
                     Circle()
                         .fill(Color.white)

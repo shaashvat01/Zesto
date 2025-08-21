@@ -7,8 +7,13 @@
 
 import Foundation
 import SwiftUICore
+enum AccountType: String, Codable {
+    case user
+    case guest
+}
 
 struct UserModel: Identifiable {
+    var type: AccountType = .user
     var id: String
     var email: String
     var firstName: String

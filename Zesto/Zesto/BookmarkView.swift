@@ -65,6 +65,7 @@ struct BookmarkView: View {
         .onAppear {
             appState.topID = 6
         }
+        
     }
 }
 

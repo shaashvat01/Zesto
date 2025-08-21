@@ -29,11 +29,7 @@ let insightCardColors: [Color] = [
 let mealTimes = ["Breakfast", "Lunch", "Dinner", "Snack"]
 
 let dishNames = [
-    "Big Mac", "Beef Rendang", "Chakchouka", "Bakewell tart", "French Onion Soup",
-    "Potato Salad (Olivier Salad)", "Breakfast Potatoes", "Dal fry",
-    "Bread and Butter Pudding", "Tunisian Lamb Soup", "Fettucine alfredo",
-    "Split Pea Soup", "Chicken Handi", "Sticky Toffee Pudding",
-    "Chicken Basquaise", "Piri-piri chicken and slaw"
+    "Baingan Bharta", "Beetroot Soup (Borscht)", "Cabbage Soup (Shchi)", "Chickpea Fajitas", "Crispy Eggplant", "Dal fry", "Egg Drop Soup", "Eggplant Adobo", "Flamiche", "Ful Medames", "Gigantes Plaki", "Grilled eggplant with coconut milk", "Kafteji", "Kidney Bean Curry", "Koshari", "Leblebi Soup", "Matar Paneer", "Moroccan Carrot Soup", "Mushroom & Chestnut Rotolo", "Potato Salad (Olivier Salad)", "Provençal Omelette Cake", "Ratatouille", "Ribollita", "Roasted Eggplant With Tahini, Pine Nuts, and Lentils", "Shakshuka", "Smoky Lentil Chili with Squash", "Spanish Tortilla", "Spicy Arrabiata Penne", "Spicy North African Potato Salad", "Spinach & Ricotta Cannelloni", "Squash linguine", "Stovetop Eggplant With Harissa, Chickpeas, and Cumin Yogurt", "Stuffed Bell Peppers with Quinoa and Black Beans", "Summer Pistou", "Tahini Lentils", "Tamiya", "Tortang Talong", "Vegetarian Casserole", "Vegetarian Chilli", "Yaki Udon"
 ]
 
 let insightMessages = [
@@ -102,15 +98,24 @@ class HomeViewManager: ObservableObject {
         // Shuffle once for recommendCards
         let shuffledDishesForRecommend = dishNames.shuffled()
         
+        /*
+        
         for index in 0..<min(mealTimes.count, shuffledDishesForRecommend.count) {
             let randomMealTime = mealTimes[index]
             let randomDish = shuffledDishesForRecommend[index]
             addRecommendCard(mealTime: randomMealTime, dishName: randomDish, imageURL: nil)
         }
+         */
+        for i in 0..<6 {
+            let mealTime = mealTimes[i % mealTimes.count]   // wraps around if fewer
+            let dish = shuffledDishesForRecommend[i % shuffledDishesForRecommend.count]
+            
+            addRecommendCard(mealTime: mealTime, dishName: dish, imageURL: nil)
+        }
 
         // Generate 4 random AI insights
 
-        for _ in 1...4 {
+        for _ in 1...6 {
             let randomMessage = insightMessages.randomElement() ?? "Eat healthy!"
             addInsightCard(message: randomMessage)
         }
@@ -118,7 +123,7 @@ class HomeViewManager: ObservableObject {
         // Shuffle again for popularCards (different set, no overlap assumed)
         let shuffledDishesForPopular = dishNames.shuffled()
 
-        for index in 0..<4 {
+        for index in 0..<6 {
             let randomDish = shuffledDishesForPopular[index]
             addPopularCard(dishName: randomDish, imageURL: nil)  // Unique dish per card
         }

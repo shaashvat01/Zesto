@@ -39,7 +39,7 @@ struct HomePage: View {
                             
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
-                                    ForEach(1...4, id: \.self) { index in
+                                    ForEach(1...6, id: \.self) { index in
                                         ZStack{
                                             if let card = homeManager.getInsightCard(index: index-1) {
                                                 RoundedRectangle(cornerRadius: 10)
@@ -75,7 +75,7 @@ struct HomePage: View {
                             
                         }
                         .padding()
-                        .frame(width: geometry.size.width)
+                        .frame(maxWidth: .infinity, alignment: .center)
                         .frame(maxHeight: .infinity)
                         
                     }
@@ -86,9 +86,11 @@ struct HomePage: View {
                     //.frame(maxWidth: .infinity, maxHeight: .infinity)
                     .frame(width: geometry.size.width)
                 }
+                .navigationViewStyle(StackNavigationViewStyle())
                 
                 
             }
+            .navigationViewStyle(StackNavigationViewStyle())
         }
         .onAppear {
                 appState.hideTopBar = false
@@ -103,7 +105,7 @@ struct RecommendedCards: View {
     @ObservedObject var homeManager: HomeViewManager
     var body: some View {
         HStack(spacing: 15) {
-            ForEach(1...4, id: \.self) { index in
+            ForEach(1...6, id: \.self) { index in
                 ZStack{
                     
                     if let card = homeManager.getRecommendCard(index: index-1) {
@@ -188,7 +190,7 @@ struct PopularCards: View {
     @ObservedObject var homeManager: HomeViewManager
     var body: some View {
         HStack(spacing: 15) {
-            ForEach(1...4, id: \.self) { index in
+            ForEach(1...6, id: \.self) { index in
                 ZStack{
                     RoundedRectangle(cornerRadius: 20)
                         .fill(Color.black.opacity(0.1))

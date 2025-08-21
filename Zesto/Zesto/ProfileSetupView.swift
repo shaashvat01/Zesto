@@ -204,6 +204,26 @@ struct ProfileSetupView:View {
                         .disabled(stageNum == 2)
                         .shadow(radius: 5)
                     }
+                    
+                    if stageNum == 0{
+                        Button(action: {
+                            userSession.setupStatus = .complete
+                            
+                        }) {
+                            Text("Setup later")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    LinearGradient(gradient: Gradient(colors: [.green, .mint]),
+                                                   startPoint: .leading, endPoint: .trailing)
+                                )
+                                .cornerRadius(14)
+                        }
+                        .shadow(radius: 5)
+                    }
+                    
                     if(stageNum == 2){
                         Button(action: {
                             guard let userID = Auth.auth().currentUser?.uid else {

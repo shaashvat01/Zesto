@@ -128,6 +128,23 @@ struct LoginView: View {
                             .fontWeight(.medium)
                             .underline()
                     }
+                    
+                    
+                }
+                Button(action: {
+                    session.createGuestAccount { result in
+                        switch result {
+                        case .success:
+                            print("Guest account created and UserModel populated!")
+                        case .failure(let error):
+                            errorMessage = "Guest login failed: \(error.localizedDescription)"
+                        }
+                    }
+                }) {
+                    Text("Continue as guest")
+                        .foregroundColor(.green)
+                        .fontWeight(.medium)
+                        .underline()
                 }
             }
             .padding(30)

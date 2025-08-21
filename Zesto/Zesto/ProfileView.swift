@@ -16,6 +16,9 @@ struct ProfileView: View {
     @EnvironmentObject var recipeManager: UserRecipeManager
     
     @State var pageNumber = 0
+    @State var showConfirmDialog: Bool = false
+    @State var password: String = ""
+    @State var errorMessage: String = ""
     
     var body: some View {
         VStack(spacing: 20) {
@@ -157,6 +160,75 @@ struct ProfileView: View {
             }
             .shadow(radius: 5)
             .padding(.top, 32)
+            
+            if showConfirmDialog {
+                VStack(spacing: 12) {
+                    Text("Are you sure you want to delete your account? Data will be forever lost.")
+                        .foregroundColor(.red)
+                        .font(.headline)
+                        .multilineTextAlignment(.center)  // <-- wrap text
+                        .fixedSize(horizontal: false, vertical: true)
+                    
+                    SecureField("Enter your password", text: $password)
+                        .padding()
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(12)
+                    
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .fixedSize(horizontal: false, vertical: true)
+                    
+                    Button(action: {
+                        userSession.deleteAccount(password: password) { result in
+                            switch result {
+                            case .success:
+                                print("User account deleted")
+                            case .failure(let error):
+                                errorMessage = "Error please try again."
+                            }
+                        }
+                    }) {
+                        Text("Confirm Delete")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.red)
+                            .cornerRadius(14)
+                    }
+                }
+                .padding()
+                .background(Color.white.opacity(0.95))
+                .cornerRadius(20)
+                .shadow(radius: 5)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+                .animation(.spring(), value: showConfirmDialog)
+            }
+        
+                
+            
+        
+            
+            if userSession.userModel?.type != .guest {
+                Button(action: {
+                    showConfirmDialog.toggle()
+                }) {
+                    withAnimation(){
+                        Text(showConfirmDialog ? "Cancel" : "Delete Account")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.red)
+                            .cornerRadius(14)
+                    }
+                    
+                }
+                .shadow(radius: 5)
+                .padding(.top, 32)
+            }
+            
             
             Spacer()
         }

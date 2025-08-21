@@ -71,8 +71,10 @@ struct MainView: View {
             .animation(.easeInOut, value: showMenu)
             .edgesIgnoringSafeArea(.all)
         }
+        .navigationViewStyle(StackNavigationViewStyle())
         
     }
+    
 }
 
 #Preview {

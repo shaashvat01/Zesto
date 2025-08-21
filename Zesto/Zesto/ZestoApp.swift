@@ -31,25 +31,40 @@ struct ZestoApp: App {
     var body: some Scene {
         WindowGroup {
             if userSession.isLoggedIn {
-                switch userSession.setupStatus {
-                case .unknown:
-                    ZStack {
-                        Color(.systemBackground).ignoresSafeArea()
-                        ProgressView("Loading...")
-                    }
-                case .complete:
+                if userSession.userModel?.type == .guest {
                     MainView()
                         .modelContainer(for: [InventoryItem.self, ShoppingListItem.self])
                         .environmentObject(appState)
                         .environmentObject(userSession)
-                        .environmentObject(inventoryViewModel)  
+                        .environmentObject(inventoryViewModel)
                         .environmentObject(userRecipe)
                         .environmentObject(UserRecipeManager())
-
-                case .incomplete:
-                    ProfileSetupView()
-                        .environmentObject(userSession)
+                        .navigationViewStyle(StackNavigationViewStyle())
                 }
+                else{
+                    switch userSession.setupStatus {
+                    case .unknown:
+                        ZStack {
+                            Color(.systemBackground).ignoresSafeArea()
+                            ProgressView("Loading...")
+                        }
+                    case .complete:
+                        MainView()
+                            .modelContainer(for: [InventoryItem.self, ShoppingListItem.self])
+                            .environmentObject(appState)
+                            .environmentObject(userSession)
+                            .environmentObject(inventoryViewModel)
+                            .environmentObject(userRecipe)
+                            .environmentObject(UserRecipeManager())
+                            .navigationViewStyle(StackNavigationViewStyle())
+
+                    case .incomplete:
+                         ProfileSetupView()
+                             .environmentObject(userSession)
+                        
+                    }
+                }
+                
             } else {
                 LoginView()
                     .environmentObject(userSession)

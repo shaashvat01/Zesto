@@ -27,9 +27,33 @@ class UserSessionManager: ObservableObject {
     @EnvironmentObject var userRecipeManager: UserRecipeManager
 
     init() {
+        if UserDefaults.standard.bool(forKey: "isGuest") {
+            let guestId = UserDefaults.standard.string(forKey: "guestId") ?? UUID().uuidString
+            let guestUsername = UserDefaults.standard.string(forKey: "guestUsername") ?? "guest"
+
+            self.userModel = UserModel(
+                type: .guest,
+                id: guestId,
+                email: "",
+                firstName: "Guest",
+                lastName: "",
+                username: guestUsername,
+                displayName: nil,
+                dateOfBirth: nil,
+                dietaryPreferences: [],
+                createdAt: Date(),
+                profileImageURL: nil
+            )
+
+            self.isLoggedIn = true
+            self.setupStatus = .complete
+            print("Username is - \(self.userModel?.username ?? "Not Logged In")")
+            return
+        }
+
+        // Firebase fallback
         self.currentUser = Auth.auth().currentUser
         self.isLoggedIn = currentUser != nil
-
         if isLoggedIn {
             checkIfSetupIsDone()
         }
@@ -81,23 +105,37 @@ class UserSessionManager: ObservableObject {
                     
 
                 }
+                if self.userModel?.type == .guest {
+                    self.setupStatus = .complete
+                }
                 
             } else {
-                self.setupStatus = .incomplete
+                if self.userModel?.type == .guest {
+                    self.setupStatus = .complete
+                }
+                else{
+                    self.setupStatus = .incomplete
+                }
+                
             }
         }
     }
 
     func logout() {
-        do {
+        self.currentUser = nil
+        self.isLoggedIn = false
+        self.userModel = nil
+        self.setupStatus = .unknown
 
+        // If guest, remove local guest
+        if UserDefaults.standard.bool(forKey: "isGuest") {
+                UserDefaults.standard.removeObject(forKey: "isGuest")
+                UserDefaults.standard.removeObject(forKey: "guestId")
+                UserDefaults.standard.removeObject(forKey: "guestUsername")
+            }
+
+        do {
             try Auth.auth().signOut()
-            self.currentUser = nil
-            self.isLoggedIn = false
-            self.setupStatus = .unknown
-            self.userModel = nil
-            
-            
         } catch {
             print("Logout error: \(error.localizedDescription)")
         }
@@ -155,5 +193,66 @@ class UserSessionManager: ObservableObject {
             }
         }
     }
+    
+    func deleteAccount(password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let user = Auth.auth().currentUser,
+              let email = user.email else {
+            completion(.failure(NSError(domain: "NoUserFound", code: 0, userInfo: nil)))
+            return
+        }
+
+        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+
+        // Reauthenticate first
+        user.reauthenticate(with: credential) { _, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+
+            // Now delete the account
+            user.delete { error in
+                if let error = error {
+                    completion(.failure(error))
+                } else {
+                    self.logout()
+                    completion(.success(()))
+                }
+            }
+        }
+    }
+    
+    // Save guest
+    func createGuestAccount(completion: @escaping (Result<Void, Error>) -> Void) {
+        let guestId = UUID().uuidString
+        let guestUsername = "guest_\(Int.random(in: 1000...9999))"
+
+        let guest = UserModel(
+            type: .guest,
+            id: guestId,
+            email: "",
+            firstName: "Guest",
+            lastName: "",
+            username: guestUsername,
+            displayName: nil,
+            dateOfBirth: nil,
+            dietaryPreferences: [],
+            createdAt: Date(),
+            profileImageURL: nil
+        )
+
+        self.userModel = guest
+        self.isLoggedIn = true
+        self.setupStatus = .complete
+
+        // Store simple info in UserDefaults
+        UserDefaults.standard.set(true, forKey: "isGuest")
+        UserDefaults.standard.set(guestId, forKey: "guestId")
+        UserDefaults.standard.set(guestUsername, forKey: "guestUsername")
+
+        completion(.success(()))
+    }
+    
+    
 
 }
