@@ -90,13 +90,20 @@ struct MapView: View {
             }
         }
         // Alert if location permission is denied
-        .alert(isPresented: $viewModel.locationDenied)
-        {
-            Alert(title: Text("Location Permission Denied"),
-                  message: Text("Please enable location services in settings to view nearby grocery stores."),
-                  dismissButton: .default(Text("OK"), action: {
-                      dismiss()
-            }))
+        .alert("Location Access Needed", isPresented: $viewModel.showLocationSettingsAlert) {
+            Button("Cancel", role: .cancel) {
+                dismiss()
+            }
+            Button("Open Privacy Settings") {
+                if let settingsUrl = URL(string: "App-prefs:Privacy") {
+                    UIApplication.shared.open(settingsUrl)
+                } else if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(settingsUrl)
+                }
+                dismiss()
+            }
+        } message: {
+            Text("Zesto uses your current location while the app is open to help you find nearby grocery stores and provide map directions. Your location is only used for this purpose, is not stored permanently, and is never shared with third parties.")
         }
     }
 }

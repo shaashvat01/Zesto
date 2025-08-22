@@ -7,6 +7,8 @@
 
 import SwiftUI
 import UIKit
+import AVFoundation
+import Photos
 
 class ScanViewModel: ObservableObject {
     // For picking images
@@ -21,22 +23,69 @@ class ScanViewModel: ObservableObject {
     @Published var recognizedItems: [ReceiptItem] = []
     @Published var openAIResponse: String = ""
     
+    // Permission alerts
+    @Published var showCameraDeniedAlert = false
+    @Published var showPhotosDeniedAlert = false
+    
     func pickCamera() {
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            sourceType = .camera
-            showImagePicker = true
-        } else {
-            print("Camera not available")
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            presentCamera()
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+                DispatchQueue.main.async {
+                    if granted {
+                        self?.presentCamera()
+                    } else {
+                        self?.showCameraDeniedAlert = true
+                    }
+                }
+            }
+        case .denied, .restricted:
+            showCameraDeniedAlert = true
+        @unknown default:
+            showCameraDeniedAlert = true
         }
     }
     
     func pickGallery() {
-        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
-            sourceType = .photoLibrary
-            showImagePicker = true
-        } else {
-            print("Can't access photo library")
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        switch status {
+        case .authorized, .limited:
+            presentGallery()
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization(for: .readWrite) { [weak self] newStatus in
+                DispatchQueue.main.async {
+                    if newStatus == .authorized || newStatus == .limited {
+                        self?.presentGallery()
+                    } else {
+                        self?.showPhotosDeniedAlert = true
+                    }
+                }
+            }
+        case .denied, .restricted:
+            showPhotosDeniedAlert = true
+        @unknown default:
+            showPhotosDeniedAlert = true
         }
+    }
+    
+    private func presentCamera() {
+        guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
+            print("Camera not available on this device")
+            return
+        }
+        sourceType = .camera
+        showImagePicker = true
+    }
+    
+    private func presentGallery() {
+        guard UIImagePickerController.isSourceTypeAvailable(.photoLibrary) else {
+            print("Photo library not available")
+            return
+        }
+        sourceType = .photoLibrary
+        showImagePicker = true
     }
     
     func reset() {
@@ -47,6 +96,8 @@ class ScanViewModel: ObservableObject {
         recognizedItems.removeAll()
         openAIResponse = ""
         isLoading = false
+        showCameraDeniedAlert = false
+        showPhotosDeniedAlert = false
     }
     
     func processImage(_ image: UIImage) {

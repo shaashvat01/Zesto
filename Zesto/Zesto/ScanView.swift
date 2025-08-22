@@ -11,6 +11,7 @@ struct ScanView: View {
     @ObservedObject var viewModel: ScanViewModel
     @ObservedObject var inventoryVM: InventoryViewModel
     @EnvironmentObject var appState: AppState
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -76,7 +77,32 @@ struct ScanView: View {
                     inventoryVM: inventoryVM
                 )
             }
-
+            // Camera permission denied alert
+            .alert("Camera Access Needed", isPresented: $viewModel.showCameraDeniedAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Open Privacy Settings") {
+                    if let settingsUrl = URL(string: "App-prefs:Privacy") {
+                        UIApplication.shared.open(settingsUrl)
+                    } else if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(settingsUrl)
+                    }
+                }
+            } message: {
+                Text("Zesto uses the camera to let you scan grocery receipts directly. The app processes the text from the receipt on your device to automatically extract items, prices, and categories so they can be added to your pantry. The images are not stored permanently, shared with others, or used for any purpose beyond this scan.")
+            }
+            // Photos permission denied alert
+            .alert("Photos Access Needed", isPresented: $viewModel.showPhotosDeniedAlert) {
+                Button("Cancel", role: .cancel) { }
+                Button("Open Privacy Settings") {
+                    if let settingsUrl = URL(string: "App-prefs:Privacy") {
+                        UIApplication.shared.open(settingsUrl)
+                    } else if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(settingsUrl)
+                    }
+                }
+            } message: {
+                Text("Zesto allows you to import an existing photo of a grocery receipt from your photo library. This lets the app extract grocery items and add them to your pantry without requiring a new scan. Only the specific photo you select is accessed. The app does not browse your entire library, store your photos, or upload them anywhere.")
+            }
         }
     }
 }
