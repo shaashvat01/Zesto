@@ -151,7 +151,7 @@ class UserSessionManager: ObservableObject {
         let userRef = db.collection("users").document(userID)
 
         if let profileImage = profileImage, let imageData = profileImage.jpegData(compressionQuality: 0.8) {
-            let storageRef = Storage.storage().reference().child("profileImages/\(UUID().uuidString).jpg")
+            let storageRef = Storage.storage().reference().child("profileImages/\(userID).jpg")
             storageRef.putData(imageData, metadata: nil) { metadata, error in
                 if let error = error {
                     completion(.failure(error))
@@ -193,7 +193,7 @@ class UserSessionManager: ObservableObject {
             }
         }
     }
-    
+    /*
     func deleteAccount(password: String, completion: @escaping (Result<Void, Error>) -> Void) {
         guard let user = Auth.auth().currentUser,
               let email = user.email else {
@@ -217,6 +217,78 @@ class UserSessionManager: ObservableObject {
                 } else {
                     self.logout()
                     completion(.success(()))
+                }
+            }
+        }
+    }
+     */
+    
+    func deleteAccount(password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let user = Auth.auth().currentUser,
+              let email = user.email else {
+            completion(.failure(NSError(domain: "NoUserFound", code: 0, userInfo: nil)))
+            return
+        }
+
+        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+
+        // Reauthenticate first
+        user.reauthenticate(with: credential) { _, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+
+            let uid = user.uid
+            let db = Firestore.firestore()
+            let storageRef = Storage.storage().reference().child("profileImages/\(uid).jpg")
+
+            // Delete profile image from Storage
+            storageRef.delete { storageError in
+                if let storageError = storageError {
+                    print("Warning: Failed to delete profile image: \(storageError.localizedDescription)")
+                    // Proceed anyway
+                }
+
+                // Delete subcollections (likes, bookmarks)
+                let collections = ["likes", "bookmarks"]
+                let dispatchGroup = DispatchGroup()
+
+                for collection in collections {
+                    dispatchGroup.enter()
+                    db.collection("users").document(uid).collection(collection).getDocuments { snapshot, error in
+                        if let snapshot = snapshot {
+                            for doc in snapshot.documents {
+                                doc.reference.delete { deleteError in
+                                    if let deleteError = deleteError {
+                                        print("Failed to delete doc in \(collection): \(deleteError.localizedDescription)")
+                                    }
+                                }
+                            }
+                        }
+                        dispatchGroup.leave()
+                    }
+                }
+
+                // When all subcollections processed
+                dispatchGroup.notify(queue: .main) {
+                    // Delete user document
+                    db.collection("users").document(uid).delete { docError in
+                        if let docError = docError {
+                            print("Failed to delete user document: \(docError.localizedDescription)")
+                            // Proceed anyway
+                        }
+
+                        // Finally, delete Firebase Auth account
+                        user.delete { authError in
+                            if let authError = authError {
+                                completion(.failure(authError))
+                            } else {
+                                self.logout() // clear local state
+                                completion(.success(()))
+                            }
+                        }
+                    }
                 }
             }
         }

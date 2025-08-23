@@ -12,6 +12,7 @@ struct RecipieView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var userRecipe: UserRecipeManager
+    @EnvironmentObject var userSession: UserSessionManager
     
     var body: some View {
             ScrollView {
@@ -104,37 +105,41 @@ struct RecipieView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                     
+                    
                     // Buttons
-                    HStack(spacing: 16) {
-                        Button(action: {
-                            if userRecipe.isRecipeLiked(recipe){
-                                userRecipe.removeLike(recipe)
+                    if userSession.userModel?.type != .guest {
+                        HStack(spacing: 16) {
+                            Button(action: {
+                                if userRecipe.isRecipeLiked(recipe){
+                                    userRecipe.removeLike(recipe)
+                                }
+                                else{
+                                    userRecipe.addLike(recipe)
+                                }
+                                
+                            }) {
+                                Image(systemName: userRecipe.isRecipeLiked(recipe) ? "heart.fill" : "heart")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(.red)
                             }
-                            else{
-                                userRecipe.addLike(recipe)
+                            Button(action: {
+                                if userRecipe.isRecipeBookmarked(recipe){
+                                    userRecipe.removeBookmark(recipe)
+                                }
+                                else{
+                                    userRecipe.addBookmark(recipe)
+                                }
+                                
+                            }) {
+                                Image(systemName: userRecipe.isRecipeBookmarked(recipe) ? "bookmark.fill" : "bookmark")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(.blue)
                             }
-                            
-                        }) {
-                            Image(systemName: userRecipe.isRecipeLiked(recipe) ? "heart.fill" : "heart")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .foregroundColor(.red)
-                        }
-                        Button(action: {
-                            if userRecipe.isRecipeBookmarked(recipe){
-                                userRecipe.removeBookmark(recipe)
-                            }
-                            else{
-                                userRecipe.addBookmark(recipe)
-                            }
-                            
-                        }) {
-                            Image(systemName: userRecipe.isRecipeBookmarked(recipe) ? "bookmark.fill" : "bookmark")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .foregroundColor(.blue)
                         }
                     }
+
                     
                     // Ingredients
                     VStack(alignment: .leading, spacing: 6) {

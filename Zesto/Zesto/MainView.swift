@@ -63,6 +63,7 @@ struct MainView: View {
                     
                     Spacer()
                     BottomBar()
+                        .ignoresSafeArea(edges: .bottom)
                     
                     
                 }

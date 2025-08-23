@@ -27,42 +27,47 @@ struct ChatView: View {
     var body: some View {
         NavigationView
         {
-            VStack
-            {
-                ScrollView
+            ZStack{
+                VStack
                 {
-                    VStack(alignment: .leading, spacing: 12)
+                    ScrollView
                     {
-                        ForEach(viewModel.messages) { message in
-                            ChatBubble(message: message)
+                        VStack(alignment: .leading, spacing: 12)
+                        {
+                            ForEach(viewModel.messages) { message in
+                                ChatBubble(message: message)
+                            }
                         }
+                        .padding()
+                    }
+                    .background(Color(UIColor.systemGroupedBackground))
+                    
+                    Divider()
+                    
+                    HStack
+                    {
+                        TextField("Type your message...", text: $viewModel.inputText)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .frame(minHeight: 44)
+                        
+                        Button(action:
+                                {
+                            viewModel.sendMessage()
+                        })
+                        {
+                            Text("Send")
+                                .bold()
+                        }
+                        .padding(.horizontal)
                     }
                     .padding()
                 }
-                .background(Color(UIColor.systemGroupedBackground))
-                
-                Divider()
-                
-                HStack
-                {
-                    TextField("Type your message...", text: $viewModel.inputText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .frame(minHeight: 44)
-                    
-                    Button(action:
-                    {
-                        viewModel.sendMessage()
-                    })
-                    {
-                        Text("Send")
-                            .bold()
-                    }
-                    .padding(.horizontal)
-                }
-                .padding()
+                .navigationTitle("Chat")
+                .navigationBarTitleDisplayMode(.inline)
             }
-            .navigationTitle("Chat")
-            .navigationBarTitleDisplayMode(.inline)
+            .onTapGesture {
+                self.hideKeyboard()
+            }
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }

@@ -164,45 +164,49 @@ struct ProfileSetupView:View {
                     Spacer()
                     
                     HStack{
-                        
-                        Button(action: {
-                            if(stageNum > 0){
-                                stageNum -= 1
+                        if stageNum != 0 {
+                            Button(action: {
+                                if(stageNum > 0){
+                                    stageNum -= 1
+                                }
+                            }) {
+                                Text("Back")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(
+                                        LinearGradient(gradient: Gradient(colors: [.green, .mint]),
+                                                       startPoint: .leading, endPoint: .trailing)
+                                    )
+                                    .cornerRadius(14)
                             }
-                        }) {
-                            Text("Back")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(
-                                    LinearGradient(gradient: Gradient(colors: [.green, .mint]),
-                                                   startPoint: .leading, endPoint: .trailing)
-                                )
-                                .cornerRadius(14)
+                            .disabled(stageNum == 0)
+                            .shadow(radius: 5)
                         }
-                        .disabled(stageNum == 0)
-                        .shadow(radius: 5)
                         
-                        Button(action: {
-                            if(stageNum < 2){
-                                stageNum += 1
+                        if stageNum != 2{
+                            Button(action: {
+                                if(stageNum < 2){
+                                    stageNum += 1
 
+                                }
+                            }) {
+                                Text("Next")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(
+                                        LinearGradient(gradient: Gradient(colors: [.green, .mint]),
+                                                       startPoint: .leading, endPoint: .trailing)
+                                    )
+                                    .cornerRadius(14)
                             }
-                        }) {
-                            Text("Next")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(
-                                    LinearGradient(gradient: Gradient(colors: [.green, .mint]),
-                                                   startPoint: .leading, endPoint: .trailing)
-                                )
-                                .cornerRadius(14)
+                            .disabled(stageNum >= 2)
+                            .shadow(radius: 5)
                         }
-                        .disabled(stageNum == 2)
-                        .shadow(radius: 5)
+                        
                     }
                     
                     if stageNum == 0{
