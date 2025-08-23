@@ -153,6 +153,9 @@ struct LoginView: View {
             .shadow(radius: 10)
             .padding(.horizontal, 20)
         }
+        .onTapGesture {
+            self.hideKeyboard()
+        }
     }
 
     func signup() {

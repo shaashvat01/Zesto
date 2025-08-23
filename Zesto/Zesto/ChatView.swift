@@ -62,8 +62,6 @@ struct ChatView: View {
                     }
                     .padding()
                 }
-                .navigationTitle("Chat")
-                .navigationBarTitleDisplayMode(.inline)
             }
             .onTapGesture {
                 self.hideKeyboard()

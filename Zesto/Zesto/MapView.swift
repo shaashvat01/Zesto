@@ -89,6 +89,9 @@ struct MapView: View {
                 .frame(maxHeight: UIScreen.main.bounds.height * 0.4)
             }
         }
+        .onTapGesture {
+            self.hideKeyboard()
+        }
         // Alert if location permission is denied
         .alert("Location Access Needed", isPresented: $viewModel.showLocationSettingsAlert) {
             Button("Cancel", role: .cancel) {

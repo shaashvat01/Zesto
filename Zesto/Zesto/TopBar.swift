@@ -82,6 +82,19 @@ struct TopBar: View {
                             }
                             .padding(.horizontal, 20)
                             .padding(.top, 40)
+                        case 3:
+                            HStack {
+                                Text("Chat")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.black)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                Spacer()
+                            }
+                            
+                            .padding(.horizontal, 20)
+                            .padding(.top, 40)
                         case 4: // Profile view
                             
                             ZStack{
@@ -95,15 +108,18 @@ struct TopBar: View {
                                 HStack{
                                     Spacer()
                                     
-                                    Button(action: {
-                                        appState.topID = 5
-                                    }) {
-                                        Image(systemName: "applepencil")
-                                            .resizable()
-                                            .frame(width: 24, height: 24)
-                                            .foregroundColor(.black)
-                                            .padding(8)
+                                    if userSession.userModel?.type != .guest {
+                                        Button(action: {
+                                            appState.topID = 5
+                                        }) {
+                                            Image(systemName: "applepencil")
+                                                .resizable()
+                                                .frame(width: 24, height: 24)
+                                                .foregroundColor(.black)
+                                                .padding(8)
+                                        }
                                     }
+                                    
                                 }
                             }
                             .padding(.horizontal, 20)

@@ -129,6 +129,8 @@ struct ProfileView: View {
                         .cornerRadius(14)
                         .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
                     }
+                    
+                    /*
                     HStack {
                         Text("Settings")
                             .foregroundColor(.black)
@@ -142,7 +144,7 @@ struct ProfileView: View {
                     .cornerRadius(14)
                     .shadow(color: .gray.opacity(0.2), radius: 4, x: 0, y: 2)
                     
-                    
+                    */
                     
                 }
                 
