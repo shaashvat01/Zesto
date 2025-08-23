@@ -105,8 +105,3 @@ struct ChatBubble: View
         }
     }
 }
-
-
-
-
-
